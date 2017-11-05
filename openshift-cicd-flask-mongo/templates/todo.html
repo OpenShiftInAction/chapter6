@@ -1,12 +1,36 @@
-<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-<form action="/new" method="POST">
-  <input type="text" name="name"></input>
-  <input type="text" name="description"></input>
-  <input type="submit"></input>
-</form>
+    <link type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+          rel="stylesheet">
 
-{% for item in items %}
-  <h1> {{ item.name }} </h1>
-  <p> {{ item.description }} <p>
-{% endfor %}
+</head>
+<body>
+<h4>OIA TODO List</h4>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-6">
+
+    <form action="/new" method="POST">
+      <input type="text" name="name"></input>
+      <input type="text" name="description"></input>
+      <input type="submit"></input>
+    </form>
+
+    {% for item in items %}
+      <h1> {{ item.name }} </h1>
+      <p> {{ item.description }} <p>
+    {% endfor %}
+    </div> <!-- column -->
+  </div> <!-- row -->
+</div> <!-- container -->
+
+<input type="text" id="itemname" placeholder="Add Item"/>
+<br/>
+<button id="additem" class="btn btn-primary">Add Item</button>
+</body>
+</html>

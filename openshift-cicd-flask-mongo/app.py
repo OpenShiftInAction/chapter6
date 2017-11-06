@@ -5,11 +5,8 @@ from pymongo import MongoClient
 
 app = Flask(__name__)
 
-client = MongoClient(
-    os.environ['TODO_DB_1_PORT_27017_TCP_ADDR'],
-    27017)
+client = MongoClient(os.environ['MONGO_CONNECTION_URI'],27017)
 db = client.tododb
-
 
 @app.route('/')
 def todo():
@@ -25,11 +22,18 @@ def new():
 
     item_doc = {
         'name': request.form['name'],
-        'description': request.form['description']
+        'description': request.form['completebydate']
     }
     db.tododb.insert_one(item_doc)
 
     return redirect(url_for('todo'))
+
+@app.route('/addtask', methods=['POST'])
+def new():
+
+    json_data = request.get_json(force=True)
+    db.tododb.insert_one(json_data)
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

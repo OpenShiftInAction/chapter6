@@ -39,7 +39,13 @@ def new():
 def addtask():
 
     json_data = request.get_json(force=True)
-    db.tododb.insert_one(json_data)
+
+    item_doc = {
+        'name': json_data['name'],
+        'description': json_data['completebydate']
+    }
+
+    db.tododb.insert_one(item_doc)
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
 if __name__ == "__main__":

@@ -1,5 +1,9 @@
 $(document).ready(function() {
 
+  {% for item in items %}
+    addTaskHTML(item.name, item.description);
+  {% endfor %}
+
 	$("#add-button").click(function() {
 
     task = $("#task").val().trim();
@@ -16,21 +20,7 @@ $(document).ready(function() {
 
       var jqxhr = $.post( "/addtask", function(JSON.stringify(jsonObj)) {
 
-        tr = "";
-        if(priority == "Low"){
-          tr += "<tr class=\"info\">";
-        }else if(priority == "Medium"){
-          tr += "<tr class=\"active\">";
-        }else if(priority == "High"){
-          tr += "<tr class=\"warning\">";
-        }else {
-          tr += "<tr class=\"danger\">";
-        }
-
-        $("#table").append(tr+ "<td>" + $("#task").val() + "</td><td>" + $("#priority").val() + "</td><td><button type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
-
-        $('#task').val('');
-        $('#priority').val('Low');
+        addTaskHTML(task, priority);
 
       })
       .fail(function() {
@@ -50,3 +40,23 @@ $(document).ready(function() {
   });
 
 });
+
+function addTaskHTML(task, priority){
+
+  tr = "";
+  if(priority == "Low"){
+    tr += "<tr class=\"info\">";
+  }else if(priority == "Medium"){
+    tr += "<tr class=\"active\">";
+  }else if(priority == "High"){
+    tr += "<tr class=\"warning\">";
+  }else {
+    tr += "<tr class=\"danger\">";
+  }
+
+  $("#table").append(tr+ "<td>" + $("#task").val() + "</td><td>" + $("#priority").val() + "</td><td><button type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
+
+  $('#task').val('');
+  $('#priority').val('Low');
+
+}

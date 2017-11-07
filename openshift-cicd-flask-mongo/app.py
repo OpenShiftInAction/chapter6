@@ -20,7 +20,7 @@ def todo():
 def gettasks():
 
     results = db.tododb.find()
-    return Response(jsonify(reults), mimetype='application/json')
+    return Response(json.dumps(reults), mimetype='application/json')
 
 @app.route('/new', methods=['POST'])
 def new():

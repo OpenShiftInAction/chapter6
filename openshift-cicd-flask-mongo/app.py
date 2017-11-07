@@ -41,8 +41,8 @@ def addtask():
     json_data = request.get_json(force=True)
 
     item_doc = {
-        'name': json_data['name'],
-        'description': json_data['completebydate']
+        'name': json_data.get('name'),
+        'description': json_data.get('completebydate')
     }
 
     db.tododb.insert_one(item_doc)

@@ -19,20 +19,21 @@ $(document).ready(function() {
 
     if (task != '') {
 
-
       jsonObj = [];
       var item = {};
       item ["task"] = task;
       item ["priority"] = priority;
       jsonObj.push(item);
+      jsonStr = JSON.stringify(jsonObj);
 
-      var jqxhr = $.post( "/addtask", function(JSON.stringify(jsonObj)) {
-
-        addTaskHTML(task, priority);
-
-      })
-      .fail(function() {
-        bootbox.alert( "Error saving new task to MongoDB" );
+      $.ajax({
+          type: 'POST',
+          url: '/addtask',
+          data: jsonStr,
+          success: function(data) { addTaskHTML(task, priority); },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {  bootbox.alert( "Error saving new task to MongoDB" ); },
+          contentType: "application/json",
+          dataType: 'json'
       });
 
 		} else {

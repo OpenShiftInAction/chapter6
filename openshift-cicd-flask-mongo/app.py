@@ -19,8 +19,13 @@ def todo():
 @app.route('/gettasks')
 def gettasks():
 
-    results = db.tododb.find()
-    return Response(json.dumps(reults), mimetype='application/json')
+    json_docs = []
+    _items = db.tododb.find()
+    for item in _items:
+        json_doc = json.dumps(item, default=json_util.default)
+        json_docs.append(json_doc)
+
+    return Response(json.dumps(json_doc), mimetype='application/json')
 
 @app.route('/new', methods=['POST'])
 def new():

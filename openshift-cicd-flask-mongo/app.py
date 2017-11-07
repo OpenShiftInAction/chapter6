@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, redirect, url_for, request, render_template, json, jsonify, response
+from flask import Flask, redirect, url_for, request, render_template, json, jsonify, Response
 from pymongo import MongoClient
 
 app = Flask(__name__)
@@ -22,14 +22,8 @@ def gettasks():
     _items = db.tododb.find()
     items = [item for item in _items]
 
-    response = app.response_class(
-        response=jsonify(items),
-        status=200,
-        mimetype='application/json'
-    )
-
-    return reponse
-
+    return Response(jsonify(items), mimetype='application/json'))
+    
 @app.route('/new', methods=['POST'])
 def new():
 

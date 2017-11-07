@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, redirect, url_for, request, render_template, json
+from flask import Flask, redirect, url_for, request, render_template, json, jsonify
 from pymongo import MongoClient
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def gettasks():
     items = [item for item in _items]
 
     response = app.response_class(
-        response=json.dumps(items),
+        response=jsonify(items),
         status=200,
         mimetype='application/json'
     )

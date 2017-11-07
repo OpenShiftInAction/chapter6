@@ -19,8 +19,8 @@ def todo():
 @app.route('/gettasks')
 def gettasks():
 
-    tasks = db.tododb.find()
-    return Response(jsonify(tasks), mimetype='application/json')
+    results = db.tododb.find()
+    return Response(jsonify(reults), mimetype='application/json')
 
 @app.route('/new', methods=['POST'])
 def new():
@@ -37,10 +37,8 @@ def new():
 def addtask():
 
     json_data = request.get_json(force=True)
-
     db.tododb.insert(json_data)
-
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    return flask.Response(json.dumps({'success':True}), 200, {'ContentType':'application/json'})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

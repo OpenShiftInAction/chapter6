@@ -1,8 +1,16 @@
 $(document).ready(function() {
 
-  {% for item in items %}
-    addTaskHTML( {{ item.name }}, {{ item.description}} );
-  {% endfor %}
+  $.ajax({
+    type: 'GET',
+    url: '/gettasks',
+    data: { get_param: 'value' },
+    dataType: 'json',
+    success: function (data) {
+        $.each(data, function(index, element) {
+            addTaskHTML(element.name, element.value);
+        });
+    }
+  });
 
 	$("#add-button").click(function() {
 

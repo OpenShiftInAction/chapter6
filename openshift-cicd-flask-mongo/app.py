@@ -22,8 +22,8 @@ def gettasks():
     _items = db.tododb.find()
     items = [item for item in _items]
 
-    return Response(jsonify(items), mimetype='application/json'))
-    
+    return Response(jsonify(items), mimetype='application/json')
+
 @app.route('/new', methods=['POST'])
 def new():
 

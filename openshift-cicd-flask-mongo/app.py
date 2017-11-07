@@ -29,7 +29,7 @@ def new():
     return redirect(url_for('todo'))
 
 @app.route('/addtask', methods=['POST'])
-def new():
+def addtask():
 
     json_data = request.get_json(force=True)
     db.tododb.insert_one(json_data)

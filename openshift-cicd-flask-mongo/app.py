@@ -38,7 +38,7 @@ def addtask():
 
     json_data = request.get_json(force=True)
     db.tododb.insert(json_data)
-    return flask.Response(json.dumps({'success':True}), 200, {'ContentType':'application/json'})
+    return Response(json.dumps({'success':True}), 200, {'ContentType':'application/json'})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

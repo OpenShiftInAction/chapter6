@@ -1,7 +1,6 @@
 from __future__ import print_function
 import sys
 import os
-
 from flask import Flask, redirect, url_for, request, render_template, json, jsonify, Response
 from pymongo import MongoClient
 from bson import json_util, ObjectId
@@ -52,7 +51,7 @@ def addtask():
 def deletetask():
 
     json_data = request.get_json(force=True)
-    print('Delete Task JSON: ' + json_data, file=sys.stdout)
+    print('Delete Task JSON: ' + json_data[0], file=sys.stdout)
     oid = json_data[0]['oid']
     print('OID='+oid)
 

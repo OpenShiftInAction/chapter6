@@ -56,8 +56,7 @@ def deletetask():
     print('OID='+oid)
 
     if oid:
-        entry = db.tododb.find_one({"_id": ObjectId(oid)})
-        db.entry.remove(entry)
+        db.tododb.remove({"_id": ObjectId(oid)})
 
     return Response(json_util.dumps({"_id": ObjectId(oid)}), 200, {'ContentType':'application/json'})
 

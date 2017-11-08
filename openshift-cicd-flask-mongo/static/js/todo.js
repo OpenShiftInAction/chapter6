@@ -3,10 +3,10 @@ $(document).ready(function() {
   $.ajax({
     type: 'GET',
     url: '/gettasks',
-    data: { get_param: 'value' },
     dataType: 'json',
-    success: function (data) {
-        $.each(data, function(index, element) {
+    success: function (response) {
+        console.log(JSON.stringify(response));
+        $.each(response, function(index, element) {
             addTaskHTML(element.name, element.value);
         });
     }

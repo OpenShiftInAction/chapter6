@@ -8,7 +8,7 @@ $(document).ready(function() {
         console.log(JSON.stringify(response));
         $.each(response, function(index, element) {
             jsonelement = JSON.parse(element);
-            addTaskHTML(jsonelement.task, jsonelement.priority);
+            addTaskHTML(jsonelement._id.$oid, jsonelement.task, jsonelement.priority);
         });
     }
   });
@@ -31,7 +31,7 @@ $(document).ready(function() {
           type: 'POST',
           url: '/addtask',
           data: jsonStr,
-          success: function(data) { addTaskHTML(task, priority); },
+          success: function(data) { addTaskHTML(data[0].$oid, task, priority); },
           error: function(XMLHttpRequest, textStatus, errorThrown) {  bootbox.alert( "Error saving new task to MongoDB" ); },
           contentType: "application/json",
           dataType: 'json'
@@ -64,7 +64,7 @@ function addTaskHTML(guid, task, priority){
     tr += "<tr class=\"danger\">";
   }
 
-  $("#table").append(tr+ "<td>" + task + "</td><td>" + $("#priority").val() + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
+  $("#table").append(tr+ "<td>" + task + "</td><td>" + priority + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
 
   $('#task').val('');
   $('#priority').val('Low');

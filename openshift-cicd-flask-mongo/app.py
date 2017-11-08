@@ -51,7 +51,7 @@ def addtask():
 def deletetask():
 
     json_data = request.get_json(force=True)
-    print json_data
+    print(json_data)
     oid = json_data[0].get('oid')
     print('OID='+oid)
 

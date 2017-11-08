@@ -55,7 +55,7 @@ def deletetask():
         entry = db.tododb.find_one({"_id": ObjectId(oid)})
         db.entry.remove(entry)
 
-    return Response(json_data, 200, {'ContentType':'application/json'})
+    return Response(json_util.dumps({"_id": ObjectId(oid)}), 200, {'ContentType':'application/json'})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

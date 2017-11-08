@@ -3,6 +3,8 @@ import os
 from flask import Flask, redirect, url_for, request, render_template, json, jsonify, Response
 from pymongo import MongoClient
 from bson import json_util, ObjectId
+from __future__ import print_function
+import sys
 
 app = Flask(__name__)
 
@@ -50,7 +52,10 @@ def addtask():
 def deletetask():
 
     json_data = request.get_json(force=True)
+    print('Delete Task JSON: ' + json_data, file=sys.stdout)
     oid = json_data[0]['oid']
+    print('OID='+oid)
+
     if oid:
         entry = db.tododb.find_one({"_id": ObjectId(oid)})
         db.entry.remove(entry)

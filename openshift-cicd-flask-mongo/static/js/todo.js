@@ -51,12 +51,14 @@ $(document).ready(function() {
     jsonObj.push(item);
     jsonStr = JSON.stringify(jsonObj);
 
+    rowToRemove = $(this).parent().parent();
+
     $.ajax({
         type: 'DELETE',
         url: '/deletetask',
         data: jsonStr,
         success: function(data) {
-          $(this).parent().parent().remove();
+          rowToRemove.remove();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           bootbox.alert( "Error deleting task from MongoDBB" );

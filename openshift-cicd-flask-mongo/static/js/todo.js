@@ -51,7 +51,7 @@ $(document).ready(function() {
 
 });
 
-function addTaskHTML(task, priority){
+function addTaskHTML(guid, task, priority){
 
   tr = "";
   if(priority == "Low"){
@@ -64,7 +64,7 @@ function addTaskHTML(task, priority){
     tr += "<tr class=\"danger\">";
   }
 
-  $("#table").append(tr+ "<td>" + task + "</td><td>" + $("#priority").val() + "</td><td><button type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
+  $("#table").append(tr+ "<td>" + task + "</td><td>" + $("#priority").val() + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
 
   $('#task').val('');
   $('#priority').val('Low');

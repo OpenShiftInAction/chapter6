@@ -7,7 +7,8 @@ $(document).ready(function() {
     success: function (response) {
         console.log(JSON.stringify(response));
         $.each(response, function(index, element) {
-            addTaskHTML(element.name, element.value);
+            jsonelement = JSON.parse(element);
+            addTaskHTML(jsonelement.task, jsonelement.priority);
         });
     }
   });

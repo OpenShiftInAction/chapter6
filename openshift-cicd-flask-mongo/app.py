@@ -50,7 +50,7 @@ def addtask():
 def deletetask():
 
     json_data = request.get_json(force=True)
-    oid = json.loads(json_data[0])['oid']
+    oid = json.dumps(json_data)['oid']
     if oid:
         entry = db.tododb.find_one({"_id": ObjectId(oid)})
         db.entry.remove(entry)

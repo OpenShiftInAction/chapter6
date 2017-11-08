@@ -45,7 +45,25 @@ $(document).ready(function() {
 
 	$(document).on('click', '#remove-button', function() {
 
-		$(this).parent().parent().remove();
+    jsonObj = [];
+    var item = {};
+    item ["oid"] = $(this)[0].dataset.jsonDocGuid;
+    jsonObj.push(item);
+    jsonStr = JSON.stringify(jsonObj);
+
+    $.ajax({
+        type: 'POST',
+        url: '/deletetask',
+        data: jsonStr,
+        success: function(data) {
+          $(this).parent().parent().remove();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          bootbox.alert( "Error deleting task from MongoDBB" );
+        },
+        contentType: "application/json",
+        dataType: 'json'
+    });
 
   });
 

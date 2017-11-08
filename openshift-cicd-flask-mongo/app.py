@@ -46,5 +46,16 @@ def addtask():
     _id = db.tododb.insert(json_data)
     return Response(json_util.dumps(_id), 200, {'ContentType':'application/json'})
 
+@app.route('/deletetask', methods=['DELETE'])
+def deletetask():
+
+    json_data = request.get_json(force=True)
+    oid = json_data['oid']
+    if oid:
+        entry = db.tododb.find_one({"_id": ObjectId(oid)})
+        db.entry.remove(entry)
+
+    return Response(json_data, 200, {'ContentType':'application/json'})
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

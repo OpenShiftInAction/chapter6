@@ -12,10 +12,10 @@ db = client.tododb
 @app.route('/')
 def todo():
 
-    _items = db.tododb.find()
-    items = [item for item in _items]
-
-    return render_template('todo.html', items=items)
+    #_items = db.tododb.find()
+    #items = [item for item in _items]
+    #return render_template('todo.html', items=items)
+    return render_template('todo.html')
 
 @app.route('/gettasks')
 def gettasks():

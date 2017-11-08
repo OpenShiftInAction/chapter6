@@ -26,7 +26,7 @@ def gettasks():
         json_doc = json.dumps(item, default=json_util.default)
         json_docs.append(json_doc)
 
-    return Response(json.dumps(json_doc), mimetype='application/json')
+    return Response(json.dumps(json_docs), mimetype='application/json')
 
 @app.route('/new', methods=['POST'])
 def new():

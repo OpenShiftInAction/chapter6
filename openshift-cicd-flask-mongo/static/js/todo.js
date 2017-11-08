@@ -52,7 +52,7 @@ $(document).ready(function() {
     jsonStr = JSON.stringify(jsonObj);
 
     $.ajax({
-        type: 'POST',
+        type: 'DELETE',
         url: '/deletetask',
         data: jsonStr,
         success: function(data) {

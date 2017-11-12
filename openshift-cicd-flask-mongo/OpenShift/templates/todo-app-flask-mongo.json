@@ -278,7 +278,7 @@
                   {
                     "name": "MONGODB_ADMIN_PASSWORD",
                     "value": "${MONGODB_ADMIN_PASSWORD}"
-                  },
+                  }
                 ],
                 "resources": {
                   "limits": {

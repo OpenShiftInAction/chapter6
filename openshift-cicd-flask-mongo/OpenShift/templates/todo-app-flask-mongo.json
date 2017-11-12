@@ -278,7 +278,7 @@
                   {
                     "name": "MONGODB_ADMIN_PASSWORD",
                     "value": "${MONGODB_ADMIN_PASSWORD}"
-                  },
+                  }
                 ],
                 "resources": {
                   "limits": {
@@ -546,7 +546,7 @@
       "metadata": {
         "name": "${APPLICATION_NAME}",
         "labels": {
-          "component": "${APPLICATION_NAME}",
+          "component": "${APPLICATION_NAME}"
         },
         "annotations": {
           "service.alpha.openshift.io/dependencies": "[{\"name\":\"${MONGODB_APPLICATION_NAME}\",\"namespace\":\"\",\"kind\":\"Service\"}]"

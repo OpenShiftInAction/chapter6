@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "todo-app-flask-mongo-gogs",
+    "name": "dev-todo-app-flask-mongo-gogs",
     "annotations": {
       "openshift.io/display-name": "Flask + MongoDB (Ephemeral)",
       "description": "An example Flask application with a MongoDB database. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mongodb-container/blob/master/3.2/README.md.\n\nWARNING: MongoDB instance is ephemeral so any data will be lost on pod destruction.",
@@ -34,7 +34,7 @@
       "required": true
     },
     {
-      "description": "Custom hostname for nationalparks-py application.  Leave blank for default hostname, e.g.: <application-name>.<project>.<default-domain-suffix>",
+      "description": "Custom hostname for the todo application.  Leave blank for default hostname, e.g.: <application-name>.<project>.<default-domain-suffix>",
       "displayName": "Application route",
       "name": "APPLICATION_HOSTNAME"
     },
@@ -406,19 +406,13 @@
             "generic": {
               "secret": "${GENERIC_TRIGGER_SECRET}"
             }
-          },
-          {
-            "type": "ConfigChange"
-          },
-          {
-            "type": "ImageChange"
           }
         ],
         "runPolicy": "Serial",
         "source": {
           "type": "Git",
           "git": {
-            "uri": "${GIT_URI}",
+            "uri": "${GIT_URI",
             "ref": "${GIT_REF}"
           },
           "contextDir": "${CONTEXT_DIR}"
@@ -987,6 +981,9 @@
       "kind": "Pod",
       "metadata": {
         "name": "install-gogs",
+        "annotations": {
+          "template.alpha.openshift.io/wait-for-ready": "true"
+        },
         "labels": {
           "app": "gogs",
           "job": "install-gogs"
@@ -1058,7 +1055,7 @@
         "name": "gogs-install"
       },
       "data": {
-        "installgogs.sh": "#!/bin/bash\n\nset -x\n\n# Use the oc client to get the url for the gogs route and service\nGOGSSVC=$(oc get svc gogs -o template --template='{{.spec.clusterIP}}')\nGOGSROUTE=$(oc get route gogs -o template --template='{{.spec.host}}')\n\n# Use the oc client to get the postgres variables into the current shell\neval $(oc env dc/postgresql-gogs --list | grep -v \\#)\n\n# postgres has a readiness probe, so checking if there is at least one\n# endpoint means postgres is alive and ready, so we can then attempt to install gogs\n# we're willing to wait 60 seconds for it, otherwise something is wrong.\nx=1\noc get ep postgresql-gogs -o yaml | grep \"\\- addresses:\"\nwhile [ ! $? -eq 0 ]\ndo\n  sleep 10\n  x=$(( $x + 1 ))\n\n  if [ $x -gt 100 ]\n  then\n    exit 255\n  fi\n\n  oc get ep postgresql-gogs -o yaml | grep \"\\- addresses:\"\ndone\n\n# now we wait for gogs to be ready in the same way\nx=1\noc get ep gogs -o yaml | grep \"\\- addresses:\"\nwhile [ ! $? -eq 0 ]\ndo\n  sleep 10\n  x=$(( $x + 1 ))\n\n  if [ $x -gt 100 ]\n  then\n    exit 255\n  fi\n\n  oc get ep gogs -o yaml | grep \"\\- addresses:\"\ndone\n\n# we might catch the router before it's been updated, so wait just a touch\n# more\nsleep 10\n\nRETURN=$(curl -o /dev/null -sL --post302 -w \"%{http_code}\" http://$GOGSSVC:3000/install \\\n--form db_type=PostgreSQL \\\n--form db_host=postgresql-gogs:5432 \\\n--form db_user=gogs \\\n--form db_passwd=$POSTGRESQL_PASSWORD \\\n--form db_name=gogs \\\n--form ssl_mode=disable \\\n--form db_path=data/gogs.db \\\n--form \"app_name=Gogs: Go Git Service\" \\\n--form repo_root_path=/opt/gogs/data/repositories \\\n--form run_user=gogs \\\n--form domain=localhost \\\n--form ssh_port=22 \\\n--form http_port=3000 \\\n--form app_url=http://${GOGSROUTE}/ \\\n--form log_root_path=/opt/gogs/log \\\n--form admin_name=gogs \\\n--form admin_passwd=${GOGS_PASSWORD} \\\n--form admin_confirm_passwd=${GOGS_PASSWORD} \\\n--form admin_email=admin@gogs.com)\n\nif [ $RETURN != \"200\" ] && [ $RETURN != \"302\" ]\nthen\n  echo \"ERROR: Failed to initialize Gogs\"\n  exit 255\nfi\n\nsleep 10\n\n# import github repository\ncat <<EOF > /tmp/data.json\n{\n  \"clone_addr\": \"https://github.com/OpenShiftInAction/chapter6\",\n  \"uid\": 1,\n  \"repo_name\": \"openshift-cicd-flask-mongo\"\n}\nEOF\n\nRETURN=$(curl -o /dev/null -sL -w \"%{http_code}\" -H \"Content-Type: application/json\" \\\n-u gogs:${GOGS_PASSWORD} -X POST http://$GOGSSVC:3000/api/v1/repos/migrate -d @/tmp/data.json)\n\nif [ $RETURN != \"201\" ]\nthen\n  echo \"ERROR: Failed to imported openshift-cicd-flask-mongo GitHub repo\"\n  exit 255\nfi\n\nsleep 5\n\n# add webhook to Gogs to trigger pipeline on push\ncat <<EOF > /tmp/data.json\n{\n  \"type\": \"gogs\",\n  \"config\": {\n    \"url\": \"https://openshift.default.svc.cluster.local/oapi/v1/namespaces/${DEV_PROJECT}/buildconfigs/${APPLICATION_NAME}/webhooks/${GENERIC_TRIGGER_SECRET}/generic\",\n    \"content_type\": \"json\"\n  },\n  \"events\": [\n    \"push\"\n  ],\n  \"active\": true\n}\nEOF\n\nRETURN=$(curl -o /dev/null -sL -w \"%{http_code}\" -H \"Content-Type: application/json\" \\\n-u gogs:${GOGS_PASSWORD} -X POST http://$GOGSSVC:3000/api/v1/repos/gogs/openshift-cicd-flask-mongo/hooks -d @/tmp/data.json)\n\nif [ $RETURN != \"201\" ]\nthen\n  echo \"ERROR: Failed to set webhook\"\n  exit 255\nfi\n"
+        "installgogs.sh": "#!/bin/bash\n\nset -x\n\n# Use the oc client to get the url for the gogs route and service\nGOGSSVC=$(oc get svc gogs -o template --template='{{.spec.clusterIP}}')\nGOGSROUTE=$(oc get route gogs -o template --template='{{.spec.host}}')\n\n# Use the oc client to get the postgres variables into the current shell\neval $(oc env dc/postgresql-gogs --list | grep -v \\#)\n\n# postgres has a readiness probe, so checking if there is at least one\n# endpoint means postgres is alive and ready, so we can then attempt to install gogs\n# we're willing to wait 60 seconds for it, otherwise something is wrong.\nx=1\noc get ep postgresql-gogs -o yaml | grep \"\\- addresses:\"\nwhile [ ! $? -eq 0 ]\ndo\n  sleep 10\n  x=$(( $x + 1 ))\n\n  if [ $x -gt 100 ]\n  then\n    exit 255\n  fi\n\n  oc get ep postgresql-gogs -o yaml | grep \"\\- addresses:\"\ndone\n\n# now we wait for gogs to be ready in the same way\nx=1\noc get ep gogs -o yaml | grep \"\\- addresses:\"\nwhile [ ! $? -eq 0 ]\ndo\n  sleep 10\n  x=$(( $x + 1 ))\n\n  if [ $x -gt 100 ]\n  then\n    exit 255\n  fi\n\n  oc get ep gogs -o yaml | grep \"\\- addresses:\"\ndone\n\n# we might catch the router before it's been updated, so wait just a touch\n# more\nsleep 10\n\nRETURN=$(curl -o /dev/null -sL --post302 -w \"%{http_code}\" http://$GOGSSVC:3000/install \\\n--form db_type=PostgreSQL \\\n--form db_host=postgresql-gogs:5432 \\\n--form db_user=gogs \\\n--form db_passwd=$POSTGRESQL_PASSWORD \\\n--form db_name=gogs \\\n--form ssl_mode=disable \\\n--form db_path=data/gogs.db \\\n--form \"app_name=Gogs: Go Git Service\" \\\n--form repo_root_path=/opt/gogs/data/repositories \\\n--form run_user=gogs \\\n--form domain=localhost \\\n--form ssh_port=22 \\\n--form http_port=3000 \\\n--form app_url=http://${GOGSROUTE}/ \\\n--form log_root_path=/opt/gogs/log \\\n--form admin_name=gogs \\\n--form admin_passwd=${GOGS_PASSWORD} \\\n--form admin_confirm_passwd=${GOGS_PASSWORD} \\\n--form admin_email=admin@gogs.com)\n\nif [ $RETURN != \"200\" ] && [ $RETURN != \"302\" ]\nthen\n  echo \"ERROR: Failed to initialize Gogs\"\n  exit 255\nfi\n\nsleep 10\n\n# import github repository\ncat <<EOF > /tmp/data.json\n{\n  \"clone_addr\": \"${GIT_URI}\",\n  \"uid\": 1,\n  \"repo_name\": \"${CONTEXT_DIR}\"\n}\nEOF\n\nRETURN=$(curl -o /dev/null -sL -w \"%{http_code}\" -H \"Content-Type: application/json\" \\\n-u gogs:${GOGS_PASSWORD} -X POST http://$GOGSSVC:3000/api/v1/repos/migrate -d @/tmp/data.json)\n\nif [ $RETURN != \"201\" ]\nthen\n  echo \"ERROR: Failed to imported openshift-cicd-flask-mongo GitHub repo\"\n  exit 255\nfi\n\nsleep 5\n\n# add webhook to Gogs to trigger pipeline on push\ncat <<EOF > /tmp/data.json\n{\n  \"type\": \"gogs\",\n  \"config\": {\n    \"url\": \"https://openshift.default.svc.cluster.local/oapi/v1/namespaces/${DEV_PROJECT}/buildconfigs/${APPLICATION_NAME}/webhooks/${GENERIC_TRIGGER_SECRET}/generic\",\n    \"content_type\": \"json\"\n  },\n  \"events\": [\n    \"push\"\n  ],\n  \"active\": true\n}\nEOF\n\nRETURN=$(curl -o /dev/null -sL -w \"%{http_code}\" -H \"Content-Type: application/json\" \\\n-u gogs:${GOGS_PASSWORD} -X POST http://$GOGSSVC:3000/api/v1/repos/gogs/openshift-cicd-flask-mongo/hooks -d @/tmp/data.json)\n\nif [ $RETURN != \"201\" ]\nthen\n  echo \"ERROR: Failed to set webhook\"\n  exit 255\nfi\n\n\nexport newgiturl=http://$(oc get svc gogs -o=jsonpath='{.spec.clusterIP}'):$(oc get svc gogs -o=jsonpath='{.spec.ports[].port}')/gogs/openshift-cicd-flask-mongo\n echo newgiturl=$newgiturl\nexport patchstr={\\\"spec\\\":{\\\"source\\\":{\\\"git\\\":{\\\"uri\\\":\\\"$newgiturl\\\"}}}}\necho $patchstr\noc patch bc todo-app-flask-mongo -p $patchstr\n\noc start-build todo-app-flask-mongo"
       }
     }
   ]

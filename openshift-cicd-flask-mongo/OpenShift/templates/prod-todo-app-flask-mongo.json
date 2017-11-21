@@ -257,14 +257,10 @@
                   "failureThreshold": 3
                 },
                 "readinessProbe": {
-                  "exec": {
-                    "command": [
-                      "/bin/sh",
-                      "-c",
-                      "mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD --eval=\"quit()\""
-                    ]
+                  "tcpSocket": {
+                    "port": 27017
                   },
-                  "initialDelaySeconds": 3,
+                  "initialDelaySeconds": 30,
                   "timeoutSeconds": 1,
                   "periodSeconds": 10,
                   "successThreshold": 1,

@@ -1,0 +1,451 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "dev-todo-app-flask-mongo-gogs",
+    "annotations": {
+      "openshift.io/display-name": "Flask + MongoDB (Ephemeral)",
+      "description": "An example Flask application with a MongoDB database. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mongodb-container/blob/master/3.2/README.md.\n\nWARNING: MongoDB instance is ephemeral so any data will be lost on pod destruction.",
+      "tags": "quickstart,python,flask,database,mongodb,gogs",
+      "iconClass": "icon-python,icon-mongodb",
+      "template.openshift.io/long-description": "This template defines resources needed to develop a Flask based application, including a build configuration, application deployment configuration, and database deployment configuration.  The database is stored in non-persistent storage, so this configuration should be used for experimental purposes only.",
+      "template.openshift.io/provider-display-name": "OpenShift In Action",
+      "template.openshift.io/documentation-url": "https://github.com/sclorg/mongodb-container/blob/master/3.2/README.md"
+    }
+  },
+  "message": "The following service(s) have been created in your project: ${APPLICATION_NAME}, ${MONGODB_APPLICATION_NAME}.\n\n${MONGODB_APPLICATION_NAME} Connection Info:\n       Username: ${MONGODB_USER}\n       Password: ${MONGODB_PASSWORD}\n       Database Name: ${MONGODB_DATABASE}\n       Connection URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_APPLICATION_NAME}/${MONGODB_DATABASE}",
+  "labels": {
+    "application": "todo-app-flask-mongo",
+    "createdBy": "todo-app-flask-mongo-template"
+  },
+  "parameters": [
+    {
+      "description": "The name of the development project used to pull the image from.",
+      "displayName": "DEV Project/Namespace",
+      "name": "DEV_PROJECT",
+      "value": "dev",
+      "required": true
+    },
+    {
+      "description": "The name of the image tag to pull the image from.",
+      "displayName": "Image Tag Name",
+      "name": "IMAGE_TAG_PROD",
+      "value": "promoteToProd",
+      "required": true
+    },
+    {
+      "description": "The name of the production project",
+      "displayName": "PROD Project/Namespace",
+      "name": "PROD_PROJECT",
+      "value": "prod",
+      "required": true
+    },
+    {
+      "description": "The name for the todo-app-flask-mongo application.",
+      "displayName": "Application Name",
+      "name": "APPLICATION_NAME",
+      "value": "todo-app-flask-mongo",
+      "required": true
+    },
+    {
+      "description": "The name for the mongodb application.",
+      "displayName": "Mongodb App",
+      "name": "MONGODB_APPLICATION_NAME",
+      "value": "mongodb",
+      "required": true
+    },
+    {
+      "name": "CONTEXT_DIR",
+      "displayName": "Context Directory",
+      "description": "Set this to the relative path to your project if it is not in the root of your repository.",
+      "value": "openshift-cicd-flask-mongo"
+    },
+    {
+      "description": "Git branch/tag reference",
+      "displayName": "Git branch/tag reference",
+      "name": "GIT_REF",
+      "value": "master",
+      "required": true
+    },
+    {
+      "description": "Database name",
+      "displayName": "Database name",
+      "name": "MONGODB_DATABASE",
+      "value": "tododb",
+      "required": true
+    },
+    {
+      "description": "Database user name",
+      "displayName": "Database user name",
+      "name": "MONGODB_USER",
+      "from": "user[a-zA-Z0-9]{3}",
+      "generate": "expression",
+      "required": true
+    },
+    {
+      "description": "Database user password",
+      "displayName": "Database user password",
+      "name": "MONGODB_PASSWORD",
+      "from": "[a-zA-Z0-9]{8}",
+      "generate": "expression",
+      "required": true
+    },
+    {
+      "description": "Database admin password",
+      "displayName": "Database admin password",
+      "name": "MONGODB_ADMIN_PASSWORD",
+      "from": "[a-zA-Z0-9]{8}",
+      "generate": "expression",
+      "required": true
+    },
+    {
+      "name": "MEMORY_LIMIT",
+      "displayName": "Memory Limit (Flask)",
+      "required": true,
+      "description": "Maximum amount of memory the Flask container can use.",
+      "value": "128Mi"
+    },
+    {
+      "name": "MONGO_MEMORY_LIMIT",
+      "displayName": "Memory Limit (MongoDB)",
+      "required": true,
+      "description": "Maximum amount of memory the MongoDB container can use.",
+      "value": "128Mi"
+    }
+  ],
+  "objects": [
+    {
+      "apiVersion": "v1",
+      "groupNames": null,
+      "kind": "RoleBinding",
+      "metadata": {
+        "name": "image-puller-prod",
+        "namespace": "development"
+      },
+      "roleRef": {
+        "name": "system:image-puller"
+      },
+      "subjects": [
+        {
+          "kind": "SystemGroup",
+          "name": "system:serviceaccounts:${PROD_PROJECT}"
+        }
+      ]
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${MONGODB_APPLICATION_NAME}",
+        "labels": {
+          "component": "${MONGODB_APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "mongo",
+            "protocol": "TCP",
+            "port": 27017,
+            "targetPort": 27017
+          }
+        ],
+        "selector": {
+          "name": "${MONGODB_APPLICATION_NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${MONGODB_APPLICATION_NAME}",
+        "labels": {
+          "component": "${MONGODB_APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "recreateParams": {
+            "timeoutSeconds": 600
+          },
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "${MONGODB_APPLICATION_NAME}"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "openshift",
+                "name": "mongodb:3.2"
+              }
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "name": "${MONGODB_APPLICATION_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "name": "${MONGODB_APPLICATION_NAME}"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "mongodb-data",
+                "emptyDir": {}
+              }
+            ],
+            "containers": [
+              {
+                "name": "${MONGODB_APPLICATION_NAME}",
+                "image": "${MONGODB_APPLICATION_NAME}",
+                "ports": [
+                  {
+                    "containerPort": 27017,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "KUBERNETES_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "MONGODB_ADMIN_PASSWORD",
+                    "value": "${MONGODB_ADMIN_PASSWORD}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MONGO_MEMORY_LIMIT}"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "mongodb-data",
+                    "mountPath": "/var/lib/mongodb/data"
+                  }
+                ],
+                "livenessProbe": {
+                  "tcpSocket": {
+                    "port": 27017
+                  },
+                  "initialDelaySeconds": 30,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "/bin/sh",
+                      "-i",
+                      "-c",
+                      "mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD --eval=\"quit()\""
+                    ]
+                  },
+                  "initialDelaySeconds": 3,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent",
+                "securityContext": {
+                  "capabilities": {},
+                  "privileged": false
+                }
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst",
+            "securityContext": {}
+          }
+        }
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}"
+      },
+      "spec": {
+        "tags": [
+          {
+            "name": "latest"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "component": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling",
+          "rollingParams": {
+            "updatePeriodSeconds": 1,
+            "intervalSeconds": 1,
+            "timeoutSeconds": 600,
+            "maxUnavailable": "25%",
+            "maxSurge": "25%"
+          },
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "${APPLICATION_NAME}"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "${APPLICATION_NAME}:${IMAGE_TAG_PROD}",
+                "namespace": "${DEV_PROJECT}"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "component": "${APPLICATION_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "component": "${APPLICATION_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "${APPLICATION_NAME}",
+                "image": "${DEV_PROJECT}/${APPLICATION_NAME}:${IMAGE_TAG_PROD}",
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "KUBERNETES_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "DB_HOST",
+                    "value": "${MONGODB_APPLICATION_NAME}"
+                  },
+                  {
+                    "name": "MONGO_CONNECTION_URI",
+                    "value": "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_APPLICATION_NAME}/${MONGODB_DATABASE}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent"
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst",
+            "securityContext": {}
+          }
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "component": "${APPLICATION_NAME}"
+        },
+        "annotations": {
+          "service.alpha.openshift.io/dependencies": "[{\"name\":\"${MONGODB_APPLICATION_NAME}\",\"namespace\":\"\",\"kind\":\"Service\"}]"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "8080-tcp",
+            "protocol": "TCP",
+            "port": 8080,
+            "targetPort": 5000
+          }
+        ],
+        "selector": {
+          "component": "${APPLICATION_NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "component": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "host": "",
+        "to": {
+          "kind": "Service",
+          "name": "${APPLICATION_NAME}",
+          "weight": 100
+        },
+        "port": {
+          "targetPort": "8080-tcp"
+        }
+      }
+    }
+  ]
+}

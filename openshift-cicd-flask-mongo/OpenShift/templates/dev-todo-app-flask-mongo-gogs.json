@@ -66,18 +66,6 @@
       "required": true
     },
     {
-      "description": "Disable data file preallocation.",
-      "name": "MONGODB_NOPREALLOC"
-    },
-    {
-      "description": "Set MongoDB to use a smaller default data file size.",
-      "name": "MONGODB_SMALLFILES"
-    },
-    {
-      "description": "Runs MongoDB in a quiet mode that attempts to limit the amount of output.",
-      "name": "MONGODB_QUIET"
-    },
-    {
       "description": "Database user name",
       "displayName": "Database user name",
       "name": "MONGODB_USER",
@@ -170,23 +158,6 @@
           "name": "default"
         }
       ]
-    },
-    {
-      "kind": "ConfigMap",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${APPLICATION_NAME}",
-        "labels": {
-          "component": "config"
-        }
-      },
-      "data": {
-        "db.user": "${MONGODB_USER}",
-        "db.password": "${MONGODB_PASSWORD}",
-        "db.name": "${MONGODB_DATABASE}",
-        "db.properties": "db.user=${MONGODB_USER}\ndb.password=${MONGODB_PASSWORD}\ndb.name=${MONGODB_DATABASE}",
-        "application.properties": "spring.data.mongodb.uri=mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_APPLICATION_NAME}:27017/${MONGODB_DATABASE}"
-      }
     },
     {
       "kind": "Service",
@@ -283,33 +254,6 @@
                     "valueFrom": {
                       "fieldRef": {
                         "fieldPath": "metadata.namespace"
-                      }
-                    }
-                  },
-                  {
-                    "name": "MONGODB_USER",
-                    "valueFrom": {
-                      "configMapKeyRef": {
-                        "name": "${APPLICATION_NAME}",
-                        "key": "db.user"
-                      }
-                    }
-                  },
-                  {
-                    "name": "MONGODB_PASSWORD",
-                    "valueFrom": {
-                      "configMapKeyRef": {
-                        "name": "${APPLICATION_NAME}",
-                        "key": "db.password"
-                      }
-                    }
-                  },
-                  {
-                    "name": "MONGODB_DATABASE",
-                    "valueFrom": {
-                      "configMapKeyRef": {
-                        "name": "${APPLICATION_NAME}",
-                        "key": "db.name"
                       }
                     }
                   },
@@ -511,33 +455,6 @@
                   {
                     "name": "DB_HOST",
                     "value": "${MONGODB_APPLICATION_NAME}"
-                  },
-                  {
-                    "name": "DB_USERNAME",
-                    "valueFrom": {
-                      "configMapKeyRef": {
-                        "name": "${APPLICATION_NAME}",
-                        "key": "db.user"
-                      }
-                    }
-                  },
-                  {
-                    "name": "DB_PASSWORD",
-                    "valueFrom": {
-                      "configMapKeyRef": {
-                        "name": "${APPLICATION_NAME}",
-                        "key": "db.password"
-                      }
-                    }
-                  },
-                  {
-                    "name": "DB_NAME",
-                    "valueFrom": {
-                      "configMapKeyRef": {
-                        "name": "${APPLICATION_NAME}",
-                        "key": "db.name"
-                      }
-                    }
                   },
                   {
                     "name": "MONGO_CONNECTION_URI",

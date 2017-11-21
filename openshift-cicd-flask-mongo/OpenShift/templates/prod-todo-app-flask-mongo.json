@@ -2,11 +2,11 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "dev-todo-app-flask-mongo-gogs",
+    "name": "prod-todo-app-flask-mongo",
     "annotations": {
       "openshift.io/display-name": "Flask + MongoDB (Ephemeral)",
       "description": "An example Flask application with a MongoDB database. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mongodb-container/blob/master/3.2/README.md.\n\nWARNING: MongoDB instance is ephemeral so any data will be lost on pod destruction.",
-      "tags": "quickstart,python,flask,database,mongodb,gogs",
+      "tags": "quickstart,python,flask,database,mongodb",
       "iconClass": "icon-python,icon-mongodb",
       "template.openshift.io/long-description": "This template defines resources needed to develop a Flask based application, including a build configuration, application deployment configuration, and database deployment configuration.  The database is stored in non-persistent storage, so this configuration should be used for experimental purposes only.",
       "template.openshift.io/provider-display-name": "OpenShift In Action",

@@ -27,17 +27,17 @@
       "required": true
     },
     {
-      "description": "The name of the image tag to pull the image from.",
-      "displayName": "Image Tag Name",
-      "name": "IMAGE_TAG_PROD",
-      "value": "promoteToProd",
-      "required": true
-    },
-    {
       "description": "The name of the production project",
       "displayName": "PROD Project/Namespace",
       "name": "PROD_PROJECT",
       "value": "prod",
+      "required": true
+    },
+    {
+      "description": "The name of the image tag to pull the image from dev.",
+      "displayName": "Dev Image Tag Name",
+      "name": "IMAGE_TAG_PROD",
+      "value": "promoteToProd",
       "required": true
     },
     {
@@ -52,19 +52,6 @@
       "displayName": "Mongodb App",
       "name": "MONGODB_APPLICATION_NAME",
       "value": "mongodb",
-      "required": true
-    },
-    {
-      "name": "CONTEXT_DIR",
-      "displayName": "Context Directory",
-      "description": "Set this to the relative path to your project if it is not in the root of your repository.",
-      "value": "openshift-cicd-flask-mongo"
-    },
-    {
-      "description": "Git branch/tag reference",
-      "displayName": "Git branch/tag reference",
-      "name": "GIT_REF",
-      "value": "master",
       "required": true
     },
     {

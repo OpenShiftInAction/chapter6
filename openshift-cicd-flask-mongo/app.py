@@ -4,10 +4,17 @@ import os
 from flask import Flask, redirect, url_for, request, render_template, json, jsonify, Response
 from pymongo import MongoClient
 from bson import json_util, ObjectId
+import configparser
 
 app = Flask(__name__)
 
-client = MongoClient(os.environ['MONGO_CONNECTION_URI'],27017)
+if os.path.isfile('/opt/app-root/etc/mongo.ini'):
+    config = configparser.ConfigParser()
+    oiasecret = config['oiasecret']
+    client = MongoClient("mongodb://"+oiasecret[MONGODB_USER]+":"+oiasecret[MONGODB_PASSWORD+"@"+oiasecret[MONGODB_HOSTNAME]+"/"+oiasecret[MONGODB_DATABASE, 27017)
+else:
+    client = MongoClient(os.environ['MONGO_CONNECTION_URI'],27017)
+
 db = client.tododb
 
 @app.route('/')

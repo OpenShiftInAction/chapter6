@@ -1,0 +1,1045 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "dev-todo-app-flask-mongo-gogs",
+    "annotations": {
+      "openshift.io/display-name": "Flask + MongoDB (Ephemeral)",
+      "description": "An example Flask application with a MongoDB database. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mongodb-container/blob/master/3.2/README.md.\n\nWARNING: MongoDB instance is ephemeral so any data will be lost on pod destruction.",
+      "tags": "quickstart,python,flask,database,mongodb,gogs",
+      "iconClass": "icon-python,icon-mongodb",
+      "template.openshift.io/long-description": "This template defines resources needed to develop a Flask based application, including a build configuration, application deployment configuration, and database deployment configuration.  The database is stored in non-persistent storage, so this configuration should be used for experimental purposes only.",
+      "template.openshift.io/provider-display-name": "OpenShift In Action",
+      "template.openshift.io/documentation-url": "https://github.com/sclorg/mongodb-container/blob/master/3.2/README.md"
+    }
+  },
+  "message": "The following service(s) have been created in your project: ${APPLICATION_NAME}, ${MONGODB_APPLICATION_NAME}.\n\n${MONGODB_APPLICATION_NAME} Connection Info:\n       Username: ${MONGODB_USER}\n       Password: ${MONGODB_PASSWORD}\n       Database Name: ${MONGODB_DATABASE}\n       Connection URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_APPLICATION_NAME}/${MONGODB_DATABASE}",
+  "labels": {
+    "application": "todo-app-flask-mongo",
+    "createdBy": "todo-app-flask-mongo-template"
+  },
+  "parameters": [
+    {
+      "description": "The name for the todo-app-flask-mongo application.",
+      "displayName": "Application Name",
+      "name": "APPLICATION_NAME",
+      "value": "todo-app-flask-mongo",
+      "required": true
+    },
+    {
+      "description": "The name for the mongodb application.",
+      "displayName": "Mongodb App",
+      "name": "MONGODB_APPLICATION_NAME",
+      "value": "mongodb",
+      "required": true
+    },
+    {
+      "description": "Custom hostname for the todo application.  Leave blank for default hostname, e.g.: <application-name>.<project>.<default-domain-suffix>",
+      "displayName": "Application route",
+      "name": "APPLICATION_HOSTNAME"
+    },
+    {
+      "description": "Git source URI for application",
+      "displayName": "Git source repository",
+      "name": "GIT_URI",
+      "value": "https://github.com/OpenShiftInAction/chapter6",
+      "required": true
+    },
+    {
+      "name": "CONTEXT_DIR",
+      "displayName": "Context Directory",
+      "description": "Set this to the relative path to your project if it is not in the root of your repository.",
+      "value": "openshift-cicd-flask-mongo"
+    },
+    {
+      "description": "Git branch/tag reference",
+      "displayName": "Git branch/tag reference",
+      "name": "GIT_REF",
+      "value": "master",
+      "required": true
+    },
+    {
+      "description": "Database name",
+      "displayName": "Database name",
+      "name": "MONGODB_DATABASE",
+      "value": "tododb",
+      "required": true
+    },
+    {
+      "description": "Disable data file preallocation.",
+      "name": "MONGODB_NOPREALLOC"
+    },
+    {
+      "description": "Set MongoDB to use a smaller default data file size.",
+      "name": "MONGODB_SMALLFILES"
+    },
+    {
+      "description": "Runs MongoDB in a quiet mode that attempts to limit the amount of output.",
+      "name": "MONGODB_QUIET"
+    },
+    {
+      "description": "Database user name",
+      "displayName": "Database user name",
+      "name": "MONGODB_USER",
+      "from": "user[a-zA-Z0-9]{3}",
+      "generate": "expression",
+      "required": true
+    },
+    {
+      "description": "Database user password",
+      "displayName": "Database user password",
+      "name": "MONGODB_PASSWORD",
+      "from": "[a-zA-Z0-9]{8}",
+      "generate": "expression",
+      "required": true
+    },
+    {
+      "description": "Database admin password",
+      "displayName": "Database admin password",
+      "name": "MONGODB_ADMIN_PASSWORD",
+      "from": "[a-zA-Z0-9]{8}",
+      "generate": "expression",
+      "required": true
+    },
+    {
+      "name": "MEMORY_LIMIT",
+      "displayName": "Memory Limit (Flask)",
+      "required": true,
+      "description": "Maximum amount of memory the Flask container can use.",
+      "value": "128Mi"
+    },
+    {
+      "name": "MONGO_MEMORY_LIMIT",
+      "displayName": "Memory Limit (MongoDB)",
+      "required": true,
+      "description": "Maximum amount of memory the MongoDB container can use.",
+      "value": "128Mi"
+    },
+    {
+      "description": "Password for the Gogs user.",
+      "displayName": "Gogs Password",
+      "value": "password",
+      "name": "GOGS_PASSWORD",
+      "required": true
+    },
+    {
+      "displayName": "Gogs version",
+      "value": "0.11.29",
+      "name": "GOGS_VERSION",
+      "required": true
+    },
+    {
+      "description": "Password for Gogs Git Server PostgreSQL backend",
+      "displayName": "Gogs' PostgreSQL Password",
+      "from": "[a-zA-Z0-9]{16}",
+      "generate": "expression",
+      "name": "GOGS_POSTGRESQL_PASSWORD",
+      "required": true
+    },
+    {
+      "description": "Github trigger secret",
+      "displayName": "GitHub Trigger",
+      "name": "GITHUB_TRIGGER_SECRET",
+      "from": "[a-zA-Z0-9]{8}",
+      "generate": "expression",
+      "required": true
+    },
+    {
+      "description": "Generic build trigger secret",
+      "displayName": "Generic Trigger",
+      "name": "GENERIC_TRIGGER_SECRET",
+      "from": "[a-zA-Z0-9]{8}",
+      "generate": "expression",
+      "required": true
+    }
+  ],
+  "objects": [
+    {
+      "apiVersion": "v1",
+      "groupNames": null,
+      "kind": "RoleBinding",
+      "metadata": {
+        "name": "default_edit"
+      },
+      "roleRef": {
+        "name": "edit"
+      },
+      "subjects": [
+        {
+          "kind": "ServiceAccount",
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${MONGODB_APPLICATION_NAME}",
+        "labels": {
+          "component": "${MONGODB_APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "mongo",
+            "protocol": "TCP",
+            "port": 27017,
+            "targetPort": 27017
+          }
+        ],
+        "selector": {
+          "name": "${MONGODB_APPLICATION_NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${MONGODB_APPLICATION_NAME}",
+        "labels": {
+          "component": "${MONGODB_APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "recreateParams": {
+            "timeoutSeconds": 600
+          },
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "${MONGODB_APPLICATION_NAME}"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "openshift",
+                "name": "mongodb:3.2"
+              }
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "name": "${MONGODB_APPLICATION_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "name": "${MONGODB_APPLICATION_NAME}"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "mongodb-data",
+                "emptyDir": {}
+              }
+            ],
+            "containers": [
+              {
+                "name": "${MONGODB_APPLICATION_NAME}",
+                "image": "${MONGODB_APPLICATION_NAME}",
+                "ports": [
+                  {
+                    "containerPort": 27017,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "KUBERNETES_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "MONGODB_USER",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "${APPLICATION_NAME}",
+                        "key": "db.user"
+                      }
+                    }
+                  },
+                  {
+                    "name": "MONGODB_PASSWORD",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "${APPLICATION_NAME}",
+                        "key": "db.password"
+                      }
+                    }
+                  },
+                  {
+                    "name": "MONGODB_DATABASE",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "${APPLICATION_NAME}",
+                        "key": "db.name"
+                      }
+                    }
+                  },
+                  {
+                    "name": "MONGODB_ADMIN_PASSWORD",
+                    "value": "${MONGODB_ADMIN_PASSWORD}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MONGO_MEMORY_LIMIT}"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "mongodb-data",
+                    "mountPath": "/var/lib/mongodb/data"
+                  }
+                ],
+                "livenessProbe": {
+                  "tcpSocket": {
+                    "port": 27017
+                  },
+                  "initialDelaySeconds": 30,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "/bin/sh",
+                      "-i",
+                      "-c",
+                      "mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD --eval=\"quit()\""
+                    ]
+                  },
+                  "initialDelaySeconds": 3,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent",
+                "securityContext": {
+                  "capabilities": {},
+                  "privileged": false
+                }
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst",
+            "securityContext": {}
+          }
+        }
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}"
+      },
+      "spec": {
+        "tags": [
+          {
+            "name": "latest"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "build": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "triggers": [
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${GITHUB_TRIGGER_SECRET}"
+            }
+          },
+          {
+            "type": "Generic",
+            "generic": {
+              "secret": "${GENERIC_TRIGGER_SECRET}"
+            }
+          }
+        ],
+        "runPolicy": "Serial",
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${GIT_URI",
+            "ref": "${GIT_REF}"
+          },
+          "contextDir": "${CONTEXT_DIR}"
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "python:3.5"
+            },
+            "incremental": false
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "${APPLICATION_NAME}:latest"
+          }
+        },
+        "resources": {},
+        "postCommit": {}
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "component": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling",
+          "rollingParams": {
+            "updatePeriodSeconds": 1,
+            "intervalSeconds": 1,
+            "timeoutSeconds": 600,
+            "maxUnavailable": "25%",
+            "maxSurge": "25%"
+          },
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "${APPLICATION_NAME}"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "${APPLICATION_NAME}:latest"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "component": "${APPLICATION_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "component": "${APPLICATION_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "${APPLICATION_NAME}",
+                "image": "${APPLICATION_NAME}",
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "KUBERNETES_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "DB_HOST",
+                    "value": "${MONGODB_APPLICATION_NAME}"
+                  },
+                  {
+                    "name": "DB_USERNAME",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "${APPLICATION_NAME}",
+                        "key": "db.user"
+                      }
+                    }
+                  },
+                  {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "${APPLICATION_NAME}",
+                        "key": "db.password"
+                      }
+                    }
+                  },
+                  {
+                    "name": "DB_NAME",
+                    "valueFrom": {
+                      "configMapKeyRef": {
+                        "name": "${APPLICATION_NAME}",
+                        "key": "db.name"
+                      }
+                    }
+                  },
+                  {
+                    "name": "MONGO_CONNECTION_URI",
+                    "value": "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_APPLICATION_NAME}/${MONGODB_DATABASE}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent"
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst",
+            "securityContext": {}
+          }
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "component": "${APPLICATION_NAME}"
+        },
+        "annotations": {
+          "service.alpha.openshift.io/dependencies": "[{\"name\":\"${MONGODB_APPLICATION_NAME}\",\"namespace\":\"\",\"kind\":\"Service\"}]"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "8080-tcp",
+            "protocol": "TCP",
+            "port": 8080,
+            "targetPort": 5000
+          }
+        ],
+        "selector": {
+          "component": "${APPLICATION_NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "component": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "host": "${APPLICATION_HOSTNAME}",
+        "to": {
+          "kind": "Service",
+          "name": "${APPLICATION_NAME}",
+          "weight": 100
+        },
+        "port": {
+          "targetPort": "8080-tcp"
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "description": "The Gogs server's http port"
+        },
+        "labels": {
+          "app": "gogs"
+        },
+        "name": "gogs"
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "web",
+            "port": 3000,
+            "protocol": "TCP",
+            "targetPort": 3000
+          }
+        ],
+        "selector": {
+          "app": "gogs",
+          "deploymentconfig": "gogs"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": null,
+        "name": "postgresql-gogs",
+        "labels": {
+          "app": "gogs"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "postgresql",
+            "port": 5432,
+            "protocol": "TCP",
+            "targetPort": 5432
+          }
+        ],
+        "selector": {
+          "app": "gogs",
+          "deploymentconfig": "postgresql-gogs"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Route",
+      "metadata": {
+        "annotations": {
+          "description": "Route for gogs's http service."
+        },
+        "name": "gogs",
+        "labels": {
+          "app": "gogs"
+        }
+      },
+      "spec": {
+        "to": {
+          "kind": "Service",
+          "name": "gogs"
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ImageStream",
+      "metadata": {
+        "name": "gogs",
+        "labels": {
+          "app": "gogs"
+        }
+      },
+      "spec": {
+        "tags": [
+          {
+            "annotations": {
+              "description": "The Gogs git server docker image",
+              "tags": "gogs,go,golang"
+            },
+            "from": {
+              "kind": "DockerImage",
+              "name": "openshiftdemos/gogs:${GOGS_VERSION}"
+            },
+            "importPolicy": {},
+            "name": "${GOGS_VERSION}"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "DeploymentConfig",
+      "metadata": {
+        "labels": {
+          "app": "gogs"
+        },
+        "name": "gogs"
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "app": "gogs",
+          "deploymentconfig": "gogs"
+        },
+        "strategy": {
+          "type": "Recreate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "gogs",
+              "deploymentconfig": "gogs"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "image": " ",
+                "imagePullPolicy": "Always",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 15,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "httpGet": {
+                    "port": 3000,
+                    "path": "/"
+                  },
+                  "timeoutSeconds": 1
+                },
+                "name": "gogs",
+                "ports": [
+                  {
+                    "containerPort": 3000,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "256Mi",
+                    "cpu": "100m"
+                  },
+                  "limits": {
+                    "memory": "512Mi",
+                    "cpu": "200m"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "readinessProbe": {
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 15,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "httpGet": {
+                    "port": 3000,
+                    "path": "/"
+                  },
+                  "timeoutSeconds": 1
+                },
+                "volumeMounts": [
+                  {
+                    "name": "gogs-data",
+                    "mountPath": "/opt/gogs/data"
+                  },
+                  {
+                    "name": "gogs-config",
+                    "mountPath": "/etc/gogs/conf"
+                  }
+                ]
+              }
+            ],
+            "volumes": [
+              {
+                "name": "gogs-data",
+                "emptyDir": {}
+              },
+              {
+                "name": "gogs-config",
+                "configMap": {
+                  "name": "gogs-config",
+                  "items": [
+                    {
+                      "key": "app.ini",
+                      "path": "app.ini"
+                    }
+                  ]
+                }
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 30
+          }
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "gogs"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "gogs:${GOGS_VERSION}"
+              }
+            },
+            "type": "ImageChange"
+          }
+        ]
+      },
+      "status": {}
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "DeploymentConfig",
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "app": "gogs",
+          "deploymentconfig": "postgresql-gogs"
+        },
+        "name": "postgresql-gogs"
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "app": "gogs",
+          "deploymentconfig": "postgresql-gogs"
+        },
+        "strategy": {
+          "recreateParams": {
+            "timeoutSeconds": 600
+          },
+          "type": "Recreate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "gogs",
+              "deploymentconfig": "postgresql-gogs"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "POSTGRESQL_USER",
+                    "value": "gogs"
+                  },
+                  {
+                    "name": "POSTGRESQL_PASSWORD",
+                    "value": "${GOGS_POSTGRESQL_PASSWORD}"
+                  },
+                  {
+                    "name": "POSTGRESQL_DATABASE",
+                    "value": "gogs"
+                  }
+                ],
+                "image": " ",
+                "imagePullPolicy": "IfNotPresent",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 30,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 5432
+                  },
+                  "timeoutSeconds": 1
+                },
+                "name": "postgresql",
+                "ports": [
+                  {
+                    "containerPort": 5432,
+                    "protocol": "TCP"
+                  }
+                ],
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "/bin/sh",
+                      "-i",
+                      "-c",
+                      "psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'"
+                    ]
+                  },
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "requests": {
+                    "cpu": "100m",
+                    "memory": "128Mi"
+                  },
+                  "limits": {
+                    "cpu": "200m",
+                    "memory": "256Mi"
+                  }
+                },
+                "securityContext": {
+                  "capabilities": {},
+                  "privileged": false
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/var/lib/pgsql/data",
+                    "name": "postgresql-data"
+                  }
+                ]
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "name": "postgresql-data",
+                "emptyDir": {}
+              }
+            ]
+          }
+        },
+        "triggers": [
+          {
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "postgresql"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "postgresql:9.5",
+                "namespace": "openshift"
+              }
+            },
+            "type": "ImageChange"
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ]
+      },
+      "status": {}
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "install-gogs",
+        "annotations": {
+          "template.alpha.openshift.io/wait-for-ready": "true"
+        },
+        "labels": {
+          "app": "gogs",
+          "job": "install-gogs"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "oc",
+            "image": "docker.io/openshiftdemos/oc",
+            "command": [
+              "/bin/bash",
+              "/tmp/installgogs.sh"
+            ],
+            "volumeMounts": [
+              {
+                "name": "gogs-install",
+                "mountPath": "/tmp/"
+              }
+            ],
+            "resources": {
+              "limits": {
+                "memory": "128Mi"
+              }
+            },
+            "env": [
+              {
+                "name": "DEV_PROJECT",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.namespace"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "gogs-install",
+            "configMap": {
+              "name": "gogs-install",
+              "items": [
+                {
+                  "key": "installgogs.sh",
+                  "path": "installgogs.sh"
+                }
+              ]
+            }
+          }
+        ],
+        "restartPolicy": "Never"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "gogs-config"
+      },
+      "data": {
+        "app.ini": "RUN_MODE = prod\nRUN_USER = gogs\n\n[security]\nINSTALL_LOCK = false\n\n[repository]\nROOT = /opt/gogs/data/repositories\n\n[webhook]\nSKIP_TLS_VERIFY = true\n"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "gogs-install"
+      },
+      "data": {
+        "installgogs.sh": "#!/bin/bash\n\nset -x\n\n# Use the oc client to get the url for the gogs route and service\nGOGSSVC=$(oc get svc gogs -o template --template='{{.spec.clusterIP}}')\nGOGSROUTE=$(oc get route gogs -o template --template='{{.spec.host}}')\n\n# Use the oc client to get the postgres variables into the current shell\neval $(oc env dc/postgresql-gogs --list | grep -v \\#)\n\n# postgres has a readiness probe, so checking if there is at least one\n# endpoint means postgres is alive and ready, so we can then attempt to install gogs\n# we're willing to wait 60 seconds for it, otherwise something is wrong.\nx=1\noc get ep postgresql-gogs -o yaml | grep \"\\- addresses:\"\nwhile [ ! $? -eq 0 ]\ndo\n  sleep 10\n  x=$(( $x + 1 ))\n\n  if [ $x -gt 100 ]\n  then\n    exit 255\n  fi\n\n  oc get ep postgresql-gogs -o yaml | grep \"\\- addresses:\"\ndone\n\n# now we wait for gogs to be ready in the same way\nx=1\noc get ep gogs -o yaml | grep \"\\- addresses:\"\nwhile [ ! $? -eq 0 ]\ndo\n  sleep 10\n  x=$(( $x + 1 ))\n\n  if [ $x -gt 100 ]\n  then\n    exit 255\n  fi\n\n  oc get ep gogs -o yaml | grep \"\\- addresses:\"\ndone\n\n# we might catch the router before it's been updated, so wait just a touch\n# more\nsleep 10\n\nRETURN=$(curl -o /dev/null -sL --post302 -w \"%{http_code}\" http://$GOGSSVC:3000/install \\\n--form db_type=PostgreSQL \\\n--form db_host=postgresql-gogs:5432 \\\n--form db_user=gogs \\\n--form db_passwd=$POSTGRESQL_PASSWORD \\\n--form db_name=gogs \\\n--form ssl_mode=disable \\\n--form db_path=data/gogs.db \\\n--form \"app_name=Gogs: Go Git Service\" \\\n--form repo_root_path=/opt/gogs/data/repositories \\\n--form run_user=gogs \\\n--form domain=localhost \\\n--form ssh_port=22 \\\n--form http_port=3000 \\\n--form app_url=http://${GOGSROUTE}/ \\\n--form log_root_path=/opt/gogs/log \\\n--form admin_name=gogs \\\n--form admin_passwd=${GOGS_PASSWORD} \\\n--form admin_confirm_passwd=${GOGS_PASSWORD} \\\n--form admin_email=admin@gogs.com)\n\nif [ $RETURN != \"200\" ] && [ $RETURN != \"302\" ]\nthen\n  echo \"ERROR: Failed to initialize Gogs\"\n  exit 255\nfi\n\nsleep 10\n\n# import github repository\ncat <<EOF > /tmp/data.json\n{\n  \"clone_addr\": \"${GIT_URI}\",\n  \"uid\": 1,\n  \"repo_name\": \"${CONTEXT_DIR}\"\n}\nEOF\n\nRETURN=$(curl -o /dev/null -sL -w \"%{http_code}\" -H \"Content-Type: application/json\" \\\n-u gogs:${GOGS_PASSWORD} -X POST http://$GOGSSVC:3000/api/v1/repos/migrate -d @/tmp/data.json)\n\nif [ $RETURN != \"201\" ]\nthen\n  echo \"ERROR: Failed to imported openshift-cicd-flask-mongo GitHub repo\"\n  exit 255\nfi\n\nsleep 5\n\n# add webhook to Gogs to trigger pipeline on push\ncat <<EOF > /tmp/data.json\n{\n  \"type\": \"gogs\",\n  \"config\": {\n    \"url\": \"https://openshift.default.svc.cluster.local/oapi/v1/namespaces/${DEV_PROJECT}/buildconfigs/${APPLICATION_NAME}/webhooks/${GENERIC_TRIGGER_SECRET}/generic\",\n    \"content_type\": \"json\"\n  },\n  \"events\": [\n    \"push\"\n  ],\n  \"active\": true\n}\nEOF\n\nRETURN=$(curl -o /dev/null -sL -w \"%{http_code}\" -H \"Content-Type: application/json\" \\\n-u gogs:${GOGS_PASSWORD} -X POST http://$GOGSSVC:3000/api/v1/repos/gogs/openshift-cicd-flask-mongo/hooks -d @/tmp/data.json)\n\nif [ $RETURN != \"201\" ]\nthen\n  echo \"ERROR: Failed to set webhook\"\n  exit 255\nfi\n\n\nexport newgiturl=http://$(oc get svc gogs -o=jsonpath='{.spec.clusterIP}'):$(oc get svc gogs -o=jsonpath='{.spec.ports[].port}')/gogs/openshift-cicd-flask-mongo\n echo newgiturl=$newgiturl\nexport patchstr={\\\"spec\\\":{\\\"source\\\":{\\\"git\\\":{\\\"uri\\\":\\\"$newgiturl\\\"}}}}\necho $patchstr\noc patch bc todo-app-flask-mongo -p $patchstr\n\noc start-build todo-app-flask-mongo"
+      }
+    }
+  ]
+}

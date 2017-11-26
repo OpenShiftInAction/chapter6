@@ -9,7 +9,6 @@ from bson import json_util, ObjectId
 import configparser
 
 app = Flask(__name__)
-db = None
 
 def init():
     LOG_FILENAME = '/dev/termination-log'
@@ -95,5 +94,6 @@ def deletetask():
     return Response(json_util.dumps({"_id": ObjectId(oid)}), 200, {'ContentType':'application/json'})
 
 if __name__ == "__main__":
+    global db = None
     init()
     app.run(host='0.0.0.0', debug=True)

@@ -12,12 +12,12 @@ app = Flask(__name__)
 
 mongoclient_uri_str = ""
 
-if os.path.isfile('/opt/app-root/etc/mongodb_user') and os.path.isfile('/opt/app-root/etc/mongodb_password') and os.path.isfile('/opt/app-root/etc/mongodb_hostname') and os.path.isfile('/opt/app-root/etc/mongodb_database'):
-    mongodb_user = open('/opt/app-root/etc/mongodb_user').readline().rstrip()
-    mongodb_password = open('/opt/app-root/etc/mongodb_password').readline().rstrip()
-    mongodb_hostname = open('/opt/app-root/etc/mongodb_hostname').readline().rstrip()
-    mongodb_database = open('/opt/app-root/etc/mongodb_database').readline().rstrip()
-    print("Using files in /opt/app-root/etc/ for MongoDB connection")
+if os.path.isfile('/opt/app-root/mongo/mongodb_user') and os.path.isfile('/opt/app-root/mongo/mongodb_password') and os.path.isfile('/opt/app-root/mongo/mongodb_hostname') and os.path.isfile('/opt/app-root/mongo/mongodb_database'):
+    mongodb_user = open('/opt/app-root/mongo/mongodb_user').readline().rstrip()
+    mongodb_password = open('/opt/app-root/mongo/mongodb_password').readline().rstrip()
+    mongodb_hostname = open('/opt/app-root/mongo/mongodb_hostname').readline().rstrip()
+    mongodb_database = open('/opt/app-root/mongo/mongodb_database').readline().rstrip()
+    print("Using files in /opt/app-root/mongo/ for MongoDB connection")
     mongoclient_uri_str = "mongodb://"+mongodb_user+":"+mongodb_password+"@"+mongodb_hostname+"/"+mongodb_database
 
 elif os.environ.get('MONGO_CONNECTION_URI') is not None:
@@ -26,7 +26,7 @@ elif os.environ.get('MONGO_CONNECTION_URI') is not None:
 
 else:
     with open('/dev/termination-log', 'w') as file:
-        file.write('This application requires a connection to a database, with credentials provided either:\n1. The following files available in /opt/app-root/etc/: mongodb_user, mongodb_password, mongodb_hostname, mongodb_database\n2. Environment variable MONGO_CONNECTION_URI with the credentials to pass to the MongoClient library')
+        file.write('This application requires a connection to a database, with credentials provided either:\n1. The following files available in /opt/app-root/mongo/: mongodb_user, mongodb_password, mongodb_hostname, mongodb_database\n2. Environment variable MONGO_CONNECTION_URI with the credentials to pass to the MongoClient library')
     exit()
 
 try:

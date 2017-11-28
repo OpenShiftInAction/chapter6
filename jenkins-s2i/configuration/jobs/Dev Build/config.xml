@@ -9,6 +9,7 @@
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <authToken>cicdtrigger=oia</authToken>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>

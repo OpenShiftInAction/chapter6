@@ -281,6 +281,46 @@
                 }
             ]
         }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "BuildConfig",
+      "metadata": {
+        "annotations": {
+          "pipeline.alpha.openshift.io/uses": "[{\"name\": \"${JENKINS_SERVICE_NAME}\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"}]"
+        },
+        "labels": {
+          "app": "cicd-oia-pipeline",
+          "name": "oia-pipeline"
+        },
+        "name": "oia-pipeline"
+      },
+      "spec": {
+        "triggers": [
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${WEBHOOK_SECRET}"
+            }
+          },
+          {
+            "type": "Generic",
+            "generic": {
+              "secret": "${WEBHOOK_SECRET}"
+            }
+          }
+        ],
+        "runPolicy": "Serial",
+        "source": {
+          "type": "None"
+        },
+        "strategy": {
+          "jenkinsPipelineStrategy": {
+            "jenkinsfile": "//Syntax: https://jenkins.io/doc/pipeline/steps/openshift-pipeline/\r\nnode {\r\n    echo 'Hello World'\r\n    stage 'building in dev'\r\n        openshiftBuild(buildConfig: 'todo-app-flask-mongo', showBuildLogs: 'true', namespace: 'dev')\r\n    stage 'deploy in dev'\r\n        openshiftVerifyBuild(buildConfig: 'todo-app-flask-mongo', checkForTriggeredDeployments: 'true', namespace: 'dev')\r\n    stage 'promote to test'\r\n        openshiftTag(srcStream: 'todo-app-flask-mongo', srcTag: 'latest', destStream: 'todo-app-flask-mongo', destTag: 'promoteToTest', namespace: 'dev')\r\n    stage 'verifying test env'\r\n        openshiftVerifyDeployment(depCfg: 'todo-app-flask-mongo', namespace: 'test')\r\n    stage 'load testing'\r\n        echo 'load testing shell'\r\n    stage ('deploy to prod'){\r\n        timeout(time:5, unit:'MINUTES') {\r\n            input message: \"Promote to STAGE?\", ok: \"Promote\"\r\n        }\r\n        openshiftTag(srcStream: 'todo-app-flask-mongo', srcTag: 'promoteToTest', destStream: 'todo-app-flask-mongo', destTag: 'promoteToProd', namespace: 'dev')\r\n        openshiftVerifyDeployment(depCfg: 'todo-app-flask-mongo', namespace: 'prod')\r\n    \r\n    }\r\n}"
+          },
+          "type": "JenkinsPipeline"
+        }
+      }
     }
   ],
   "parameters": [

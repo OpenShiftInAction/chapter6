@@ -40,10 +40,11 @@ except:
 @app.route('/')
 def todo():
 
-    #_items = db.tododb.find()
-    #items = [item for item in _items]
-    #return render_template('todo.html', items=items)
-    return render_template('todo.html')
+    if os.path.isfile('/opt/app-root/ui/bgcolor.properties'):
+        backgroundcolor = open('/opt/app-root/ui/bgcolor.properties').readline().rstrip()
+        return render_template('todo.html', color=backgroundcolor)
+    else:
+        return render_template('todo.html')
 
 @app.route('/gettasks')
 def gettasks():

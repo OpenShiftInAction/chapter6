@@ -1,0 +1,34 @@
+Started by user [8mha:////4ETevwyX6t18DTCWEzbxaaUtWrXNtGbdwN/seklobZJhAAAAoB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyOEgYR/dLi1CL9rPzipPyivFTdxJTczDwAS+wYIckAAAA=[0mjosborne
+Building in workspace /var/lib/jenkins/jobs/Promote To Test/workspace
+
+
+Starting "Tag OpenShift Image" with the source [image stream:tag] "todo-app-flask-mongo:latest" from the project "dev" and destination stream(s) "todo-app-flask-mongo" with tag(s) "promoteToTest" from the project "dev".
+com.openshift.restclient.authorization.ResourceForbiddenException: User "system:serviceaccount:cicd:jenkins" cannot get imagestreams in project "dev" User "system:serviceaccount:cicd:jenkins" cannot get imagestreams in project "dev"
+	at com.openshift.internal.restclient.okhttp.ResponseCodeInterceptor.createOpenShiftException(ResponseCodeInterceptor.java:106)
+	at com.openshift.internal.restclient.okhttp.ResponseCodeInterceptor.intercept(ResponseCodeInterceptor.java:65)
+	at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:92)
+	at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.java:67)
+	at okhttp3.RealCall.getResponseWithInterceptorChain(RealCall.java:170)
+	at okhttp3.RealCall.execute(RealCall.java:60)
+	at com.openshift.internal.restclient.DefaultClient.execute(DefaultClient.java:255)
+	at com.openshift.internal.restclient.DefaultClient.execute(DefaultClient.java:219)
+	at com.openshift.internal.restclient.DefaultClient.execute(DefaultClient.java:207)
+	at com.openshift.internal.restclient.DefaultClient.get(DefaultClient.java:330)
+	at com.openshift.jenkins.plugins.pipeline.model.RetryIClient.lambda$get$5(RetryIClient.java:174)
+	at com.openshift.jenkins.plugins.pipeline.model.RetryIClient.retry(RetryIClient.java:72)
+	at com.openshift.jenkins.plugins.pipeline.model.RetryIClient.get(RetryIClient.java:174)
+	at com.openshift.jenkins.plugins.pipeline.model.IOpenShiftImageTagger.coreLogic(IOpenShiftImageTagger.java:139)
+	at com.openshift.jenkins.plugins.pipeline.model.IOpenShiftPlugin.doItCore(IOpenShiftPlugin.java:309)
+	at com.openshift.jenkins.plugins.pipeline.model.IOpenShiftPlugin.doIt(IOpenShiftPlugin.java:327)
+	at com.openshift.jenkins.plugins.pipeline.OpenShiftBaseStep.perform(OpenShiftBaseStep.java:81)
+	at hudson.tasks.BuildStepMonitor$1.perform(BuildStepMonitor.java:20)
+	at hudson.model.AbstractBuild$AbstractBuildExecution.perform(AbstractBuild.java:779)
+	at hudson.model.Build$BuildExecution.build(Build.java:206)
+	at hudson.model.Build$BuildExecution.doRun(Build.java:163)
+	at hudson.model.AbstractBuild$AbstractBuildExecution.run(AbstractBuild.java:534)
+	at hudson.model.Run.execute(Run.java:1728)
+	at hudson.model.FreeStyleBuild.run(FreeStyleBuild.java:43)
+	at hudson.model.ResourceController.execute(ResourceController.java:98)
+	at hudson.model.Executor.run(Executor.java:405)
+ERROR: "Tag OpenShift Image" failed
+[8mha:////4MoaMFqSSndwQ9TcifqbRM6R9ZyTYibLtWDjQ+jQF+YeAAAAVx+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P08vOT+vOD8nVc8DzHWtSE4tKMnMz/PLL0mV3NWzufebKBsTA0NFEYMUmgZnCA1SyAABjCCFBQC2xNaiYAAAAA==[0mFinished: FAILURE

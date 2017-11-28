@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <com.openshift.jenkins.plugins.pipeline.OpenShiftBuilder plugin="openshift-pipeline@1.0.47">
+      <apiURL></apiURL>
+      <namespace>dev</namespace>
+      <authToken></authToken>
+      <verbose>false</verbose>
+      <waitTime></waitTime>
+      <waitUnit>sec</waitUnit>
+      <bldCfg>todo-app-flask-mongo</bldCfg>
+      <commitID></commitID>
+      <buildName></buildName>
+      <showBuildLogs>false</showBuildLogs>
+      <checkForTriggeredDeployments>false</checkForTriggeredDeployments>
+    </com.openshift.jenkins.plugins.pipeline.OpenShiftBuilder>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>Promote To Test</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+</project>

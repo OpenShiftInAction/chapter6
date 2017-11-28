@@ -1,0 +1,13 @@
+Started by upstream project "[8mha:////4IUvmDASAQhLZk6fqHwnBVNhn8DEvwqt03345v1VgfOfAAAAoh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAz+EgZJ/az8JP2AovxcoLyqkUFIPohILS7RBwBwGnLgzgAAAA==[0mPromote To Test" build number [8mha:////4Dd039EuPFmEPjc3u+eT8CHdFELbTjJ7ed/n8QXQN/MrAAAAoh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLQIwSBin9rPwk/YCi/FygvKqRQUg+iEgtLtE3BgBP9Jc/zwAAAA==[0m3
+originally caused by:
+ Started by upstream project "[8mha:////4FaY9+tiNYE7muVaWecwvpNFQ4dfE12c/kBkekgzEjoFAAAAnR+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzOEgZB/az8JH2X1DJVIwOn0sycFH0AZtfTl8YAAAA=[0mDev Build" build number [8mha:////4DKjP5TnvAc31sL/+2AttVDz5DnH+easgH4HfjiYKV/fAAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLQAygGfpZ+Un6LqllqkYGTqWZOSn6xgCIOYHTxwAAAA==[0m3
+ originally caused by:
+  Started by user [8mha:////4ETevwyX6t18DTCWEzbxaaUtWrXNtGbdwN/seklobZJhAAAAoB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyOEgYR/dLi1CL9rPzipPyivFTdxJTczDwAS+wYIckAAAA=[0mjosborne
+Building in workspace /var/lib/jenkins/jobs/Promote To Prod/workspace
+
+
+Starting "Tag OpenShift Image" with the source [image stream:tag] "todo-app-flask-mongo:latest" from the project "dev" and destination stream(s) "todo-app-flask-mongo" with tag(s) "promoteToProd" from the project "dev".
+
+
+Exiting "Tag OpenShift Image" successfully.
+Finished: SUCCESS

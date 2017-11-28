@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.10">
+  <displayName>cicd/pipeline</displayName>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@0.1.24">
+      <uid>984638ee-d3a2-11e7-98ed-0af5e8134574</uid>
+      <namespace>cicd</namespace>
+      <name>pipeline</name>
+      <resourceVersion>4005414</resourceVersion>
+      <buildRunPolicy>Serial</buildRunPolicy>
+    </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.30">
+    <script>node(&apos;maven&apos;) {
+  stage &apos;build &amp; deploy in dev&apos;
+  openshiftBuild(namespace: &apos;development&apos;,
+  			    buildConfig: &apos;myapp&apos;,
+			    showBuildLogs: &apos;true&apos;,
+			    waitTime: &apos;3000000&apos;)
+  
+  stage &apos;verify deploy in dev&apos;
+  openshiftVerifyDeployment(namespace: &apos;development&apos;,
+				       depCfg: &apos;myapp&apos;,
+				       replicaCount:&apos;1&apos;,
+				       verifyReplicaCount: &apos;true&apos;,
+				       waitTime: &apos;300000&apos;)
+  
+  stage &apos;deploy in test&apos;
+  openshiftTag(namespace: &apos;development&apos;,
+  			  sourceStream: &apos;myapp&apos;,
+			  sourceTag: &apos;latest&apos;,
+			  destinationStream: &apos;myapp&apos;,
+			  destinationTag: &apos;promoteQA&apos;)
+  
+  openshiftDeploy(namespace: &apos;testing&apos;,
+  			     deploymentConfig: &apos;myapp&apos;,
+			     waitTime: &apos;300000&apos;)
+
+  openshiftScale(namespace: &apos;testing&apos;,
+  			     deploymentConfig: &apos;myapp&apos;,
+			     waitTime: &apos;300000&apos;,
+			     replicaCount: &apos;2&apos;)
+  
+  stage &apos;verify deploy in test&apos;
+  openshiftVerifyDeployment(namespace: &apos;testing&apos;,
+				       depCfg: &apos;myapp&apos;,
+				       replicaCount:&apos;2&apos;,
+				       verifyReplicaCount: &apos;true&apos;,
+				       waitTime: &apos;300000&apos;)
+  
+  stage &apos;Deploy to production&apos;
+  timeout(time: 2, unit: &apos;DAYS&apos;) {
+      input message: &apos;Approve to production?&apos;
+ }
+
+  openshiftTag(namespace: &apos;development&apos;,
+  			  sourceStream: &apos;myapp&apos;,
+			  sourceTag: &apos;promoteQA&apos;,
+			  destinationStream: &apos;myapp&apos;,
+			  destinationTag: &apos;promotePRD&apos;)
+
+  
+  openshiftDeploy(namespace: &apos;production&apos;,
+  			     deploymentConfig: &apos;myapp&apos;,
+			     waitTime: &apos;300000&apos;)
+  
+  openshiftScale(namespace: &apos;production&apos;,
+  			     deploymentConfig: &apos;myapp&apos;,
+			     waitTime: &apos;300000&apos;,
+			     replicaCount: &apos;2&apos;)
+  
+  stage &apos;verify deploy in production&apos;
+  openshiftVerifyDeployment(namespace: &apos;production&apos;,
+				       depCfg: &apos;myapp&apos;,
+				       replicaCount:&apos;2&apos;,
+				       verifyReplicaCount: &apos;true&apos;,
+				       waitTime: &apos;300000&apos;)
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

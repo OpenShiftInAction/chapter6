@@ -1,0 +1,17 @@
+Started by user [8mha:////4ETevwyX6t18DTCWEzbxaaUtWrXNtGbdwN/seklobZJhAAAAoB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyOEgYR/dLi1CL9rPzipPyivFTdxJTczDwAS+wYIckAAAA=[0mjosborne
+Building in workspace /var/lib/jenkins/jobs/Dev Build/workspace
+
+
+Starting the "Trigger OpenShift Build" step with build config "todo-app-flask-mongo" from the project "development".
+  Started build "todo-app-flask-mongo-5" and waiting for build completion ...
+Operation will timeout after 900000 milliseconds
+
+
+Exiting "Trigger OpenShift Build" successfully; build "todo-app-flask-mongo-5" has completed with status:  [Complete].
+
+
+Starting "Tag OpenShift Image" with the source [image stream:tag] "todo-app-flask-mongo:latest" from the project "development" and destination stream(s) "todo-app-flask-mongo" with tag(s) "promoteToTest" from the project "development".
+
+
+Exiting "Tag OpenShift Image" successfully.
+Finished: SUCCESS

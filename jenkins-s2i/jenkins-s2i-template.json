@@ -86,6 +86,18 @@
       "required": true
     },
     {
+      "description": "Whether to enable OAuth OpenShift integration. If false, the static account 'admin' will be initialized with the password 'password'.",
+      "displayName": "Enable OAuth in Jenkins",
+      "name": "ENABLE_OAUTH",
+      "value": "true"
+    },
+    {
+      "description": "Maximum amount of memory the container can use",
+      "displayName": "Memory Limit",
+      "name": "MEMORY_LIMIT",
+      "value": "512Mi"
+    },
+    {
       "description": "The name of the OpenShift Service exposed for the Jenkins container.",
       "displayName": "Jenkins Service Name",
       "name": "JENKINS_SERVICE_NAME",

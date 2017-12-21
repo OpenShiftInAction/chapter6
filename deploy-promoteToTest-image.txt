@@ -1,0 +1,1 @@
+oc new-app dev/todo-app-flask-mongo:promoteToTest

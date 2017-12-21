@@ -1,0 +1,2 @@
+oc new-project test --display-name="ToDo App - Test"
+oc new-app -e MONGODB_USER=oiatestuser -e MONGODB_PASSWORD=password -e MONGODB_DATABASE=tododb -e MONGODB_ADMIN_PASSWORD=password mongodb:3.2

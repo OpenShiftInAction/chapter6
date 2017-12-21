@@ -1,0 +1,1 @@
+oc tag todo-app-flask-mongo@sha256:8501f5a2b7cdd8650ffb69975f512af23f681e0cb01c5bef41def890ba7925a7 todo-app-flask-mongo:promoteToProd

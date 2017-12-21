@@ -1,0 +1,1 @@
+oc logs $(oc get pods -l deploymentconfig=todo-app-flask-mongo -o=jsonpath='{.items[].metadata.name}')

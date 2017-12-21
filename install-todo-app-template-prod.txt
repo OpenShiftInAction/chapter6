@@ -1,0 +1,1 @@
+oc create -f https://raw.githubusercontent.com/OpenShiftInAction/chapter6/master/openshift-cicd-flask-mongo/OpenShift/templates/prod-todo-app-flask-mongo.json -n prod

@@ -1,0 +1,5 @@
+oc set volumes dc/todo-app-flask-mongo \
+  --add \
+  --name=configmap-volume \
+  --mount-path=/opt/app-root/ui/ \
+  -t configmap --configmap-name=ui-config

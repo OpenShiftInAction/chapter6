@@ -1,0 +1,1 @@
+oc create -f https://raw.githubusercontent.com/OpenShiftInAction/chapter6/master/openshift-cicd-flask-mongo/OpenShift/templates/dev-todo-app-flask-mongo-gogs.json -n dev

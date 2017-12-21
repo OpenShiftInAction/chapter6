@@ -1,0 +1,16 @@
+oc patch dc todo-app-flask-mongo --patch '{"spec":{"triggers": [{
+                "imageChangeParams": {
+                    "automatic": true,
+                    "containerNames": [
+                        "todo-app-flask-mongo"
+                    ],
+                    "from": {
+                        "kind": "ImageStreamTag",
+                        "name": "todo-app-flask-mongo:promoteToTest",
+                        "namespace": "dev"
+                    }
+                },
+                "type": "ImageChange"
+            }
+        ]
+ }}'

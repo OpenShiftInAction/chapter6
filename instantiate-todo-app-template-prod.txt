@@ -1,0 +1,1 @@
+oc new-app --template="prod/prod-todo-app-flask-mongo"

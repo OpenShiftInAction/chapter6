@@ -1,0 +1,1 @@
+oc create -f https://raw.githubusercontent.com/OpenShiftInAction/chapter6/master/jenkins-s2i/jenkins-s2i-template.json -n cicd

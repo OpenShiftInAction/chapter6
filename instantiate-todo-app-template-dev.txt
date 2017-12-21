@@ -1,0 +1,1 @@
+oc new-app --template="dev/dev-todo-app-flask-mongo-gogs"

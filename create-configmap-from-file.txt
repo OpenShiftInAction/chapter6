@@ -1,0 +1,3 @@
+oc create configmap \
+    ui-config \
+    --from-file=bgcolor.properties

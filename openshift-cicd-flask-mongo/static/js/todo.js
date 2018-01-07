@@ -84,7 +84,7 @@ function addTaskHTML(guid, task, priority){
     tr += "<tr class=\"danger\">";
   }
 
-  var htmlstyle = {{ style }}
+  var htmlstyle = $('#todotable').data("style");
 
   if(htmlstyle == "usebuttons"){
     $("#table").append(tr+ "<td>" + task + "</td><td>" + priority + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default glyphicon glyphicon-remove'></button></td></tr>");

@@ -31,8 +31,11 @@
       <div class="well well-sm" style="margin: 3rem;">
   <h1 class="text-center">My ToDo Application</h1>
 </div>
-
-<table class="table">
+{% if style == "usebuttons" %}
+    <table id='todotable' class="table" data-style='usebuttons' >
+{% else %}
+    <table id='todotable' class="table">
+{% endif %}
   <thead>
     <tr>
       <th>Task</th>

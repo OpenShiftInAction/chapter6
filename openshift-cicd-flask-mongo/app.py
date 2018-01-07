@@ -40,9 +40,9 @@ except:
 @app.route('/')
 def todo():
 
-    if os.path.isfile('/opt/app-root/ui/bgcolor.properties'):
-        backgroundcolor = open('/opt/app-root/ui/bgcolor.properties').readline().rstrip()
-        return render_template('todo.html', color=backgroundcolor)
+    if os.path.isfile('/opt/app-root/ui/style.properties'):
+        styleprops = open('/opt/app-root/ui/style.properties').readline().rstrip()
+        return render_template('todo.html', style=styleprops)
     else:
         return render_template('todo.html')
 

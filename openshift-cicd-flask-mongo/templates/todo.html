@@ -22,13 +22,6 @@
 
   </head>
 
-  {% if color is defined %}
-      <body style="background-color:{{ color }};">
-  {% else %}
-      <body>
-  {% endif %}
-
-
     <div class="container">
       <div class="header clearfix">
         <h4 class="text-muted pull-right">Powered by OpenShift</h4>
@@ -62,7 +55,11 @@
     </select>
       </td>
       <td>
-        <button type="button" id="add-button" class="btn btn-primary">Add</button>
+        {% if style is defined %}
+            <body style="background-color:{{ color }};">
+        {% else %}
+            <button type="button" id="add-button" class="btn btn-primary glyphicon glyphicon-save"></button>
+        {% endif %}
       </td>
     </tr>
   </tbody>

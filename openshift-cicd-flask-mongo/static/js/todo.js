@@ -86,12 +86,12 @@ function addTaskHTML(guid, task, priority){
 
   var htmlstyle = {{ style }}
 
-  if(style == "usebuttons"){
+  if(htmlstyle == "usebuttons"){
     $("#table").append(tr+ "<td>" + task + "</td><td>" + priority + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default glyphicon glyphicon-remove'></button></td></tr>");
   }else{
     $("#table").append(tr+ "<td>" + task + "</td><td>" + priority + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
   }
-  
+
   $('#task').val('');
   $('#priority').val('Low');
 

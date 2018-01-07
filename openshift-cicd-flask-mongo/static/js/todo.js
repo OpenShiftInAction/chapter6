@@ -84,10 +84,10 @@ function addTaskHTML(guid, task, priority){
     tr += "<tr class=\"danger\">";
   }
 
-  {% if style is defined %}
-      $("#table").append(tr+ "<td>" + task + "</td><td>" + priority + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default glyphicon glyphicon-remove'></button></td></tr>");
+  {% if style == "usebuttons" %}
+          $("#table").append(tr+ "<td>" + task + "</td><td>" + priority + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default glyphicon glyphicon-remove'></button></td></tr>");
   {% else %}
-      $("#table").append(tr+ "<td>" + task + "</td><td>" + priority + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
+          $("#table").append(tr+ "<td>" + task + "</td><td>" + priority + "</td><td><button data-json-doc-guid="+guid+" type='button' id='remove-button' class='btn btn-default'>Remove</button></td></tr>");
   {% endif %}
 
   $('#task').val('');

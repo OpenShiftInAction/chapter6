@@ -134,7 +134,6 @@
             "uri": "${GIT_URL}",
             "ref": "${GITHUB_REF}"
           },
-          ,
           "contextDir": "${CONTEXT_DIR}",
           "type": "Git"
         },
@@ -270,7 +269,7 @@
                         ],
                         "from": {
                             "kind": "ImageStreamTag",
-                            "name": "${JENKINS_SERVICE_NAME}:latest",
+                            "name": "${JENKINS_SERVICE_NAME}:latest"
                         },
                         "lastTriggeredImage": ""
                     },

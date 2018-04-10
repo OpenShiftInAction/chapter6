@@ -19,6 +19,28 @@
         "groupNames": null,
         "kind": "RoleBinding",
         "metadata": {
+            "name": "${JENKINS_SERVICE_NAME}_admin",
+            "namespace": "test"
+        },
+        "userNames": [
+            "system:serviceaccount:cicd:${JENKINS_SERVICE_NAME}"
+        ],
+        "subjects": [
+            {
+                "kind": "ServiceAccount",
+                "namespace": "cicd",
+                "name": "${JENKINS_SERVICE_NAME}"                
+            }
+        ],
+        "roleRef": {
+            "name": "admin"
+        }        
+    },
+    {
+        "apiVersion": "v1",
+        "groupNames": null,
+        "kind": "RoleBinding",
+        "metadata": {
             "name": "${JENKINS_SERVICE_NAME}_edit",
             "namespace": "test"
         },
@@ -33,8 +55,7 @@
             }
         ],
         "roleRef": {
-            "name": "edit",
-            "namespace": "test"
+            "name": "edit"
         }        
     },
     {

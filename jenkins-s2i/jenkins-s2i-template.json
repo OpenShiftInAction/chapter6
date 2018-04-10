@@ -22,7 +22,7 @@
             "namespace": "test"
         },
         "userNames": [
-            "system:serviceaccount:cicd:jenkins"
+            "system:serviceaccount:cicd:${JENKINS_SERVICE_NAME}"
         ],
         "subjects": [
             {

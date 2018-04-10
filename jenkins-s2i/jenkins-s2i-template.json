@@ -19,6 +19,7 @@
         "groupNames": null,
         "kind": "RoleBinding",
         "metadata": {
+            "name": "${JENKINS_SERVICE_NAME}_edit",
             "namespace": "test"
         },
         "userNames": [

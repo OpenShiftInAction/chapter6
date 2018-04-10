@@ -22,15 +22,19 @@
             "name": "${JENKINS_SERVICE_NAME}_edit",
             "namespace": "dev"
         },
-        "roleRef": {
-            "name": "edit"
-        },
+        "userNames": [
+            "system:serviceaccount:cicd:jenkins"
+        ],
         "subjects": [
             {
                 "kind": "ServiceAccount",
-                "name": "${JENKINS_SERVICE_NAME}"
+                "namespace": "cicd",
+                "name": "${JENKINS_SERVICE_NAME}"                
             }
-        ]
+        ],
+        "roleRef": {
+            "name": "edit"
+        }        
     },
     {
         "apiVersion": "v1",

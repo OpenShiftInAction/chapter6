@@ -19,17 +19,17 @@
         "groupNames": null,
         "kind": "RoleBinding",
         "metadata": {
-            "name": "${JENKINS_SERVICE_NAME}_admin",
+            "name": "default_admin",
             "namespace": "test"
         },
         "userNames": [
-            "system:serviceaccount:cicd:${JENKINS_SERVICE_NAME}"
+            "system:serviceaccount:cicd:default"
         ],
         "subjects": [
             {
                 "kind": "ServiceAccount",
                 "namespace": "cicd",
-                "name": "${JENKINS_SERVICE_NAME}"                
+                "name": "default"                
             }
         ],
         "roleRef": {

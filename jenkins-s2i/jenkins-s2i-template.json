@@ -19,7 +19,8 @@
         "groupNames": null,
         "kind": "RoleBinding",
         "metadata": {
-            "name": "${JENKINS_SERVICE_NAME}_edit"
+            "name": "${JENKINS_SERVICE_NAME}_edit",
+            "namespace": "dev"
         },
         "roleRef": {
             "name": "edit"

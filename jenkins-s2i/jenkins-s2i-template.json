@@ -33,7 +33,8 @@
             }
         ],
         "roleRef": {
-            "name": "edit"
+            "name": "edit",
+            "namespace": "test"
         }        
     },
     {

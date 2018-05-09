@@ -363,7 +363,7 @@
         "source": {
           "type": "Git",
           "git": {
-            "uri": "${GIT_URI",
+            "uri": "${GIT_URI}",
             "ref": "${GIT_REF}"
           },
           "contextDir": "${CONTEXT_DIR}"

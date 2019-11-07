@@ -15,7 +15,7 @@
   },
   "objects": [
     {
-        "apiVersion": "v1",
+        "apiVersion": "authorization.openshift.io/v1",
         "groupNames":  [
             "system:serviceaccounts:cicd"
         ],
@@ -36,7 +36,7 @@
         }        
     },
     {
-        "apiVersion": "v1",
+        "apiVersion": "authorization.openshift.io/v1",
         "groupNames":  [
             "system:serviceaccounts:cicd"
         ],
@@ -117,7 +117,7 @@
         }
     },
     {
-        "apiVersion": "v1",
+        "apiVersion": "route.openshift.io/v1",
         "kind": "Route",
         "metadata": {
             "annotations": {
@@ -133,14 +133,14 @@
         }
     },
     {
-      "apiVersion": "v1",
+      "apiVersion": "image.openshift.io/v1",
       "kind": "ImageStream",
       "metadata": {
         "name": "${JENKINS_SERVICE_NAME}"
       }
     },
     {
-      "apiVersion": "v1",
+      "apiVersion": "build.openshift.io/v1",
       "kind": "BuildConfig",
       "metadata": {
         "name": "${JENKINS_SERVICE_NAME}"
@@ -166,7 +166,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "DockerImage",
-              "name": "registry.access.redhat.com/openshift3/jenkins-2-rhel7:latest"
+              "name": "registry.access.redhat.com/openshift3/jenkins-2-rhel7:v3.11"
             }
           },
           "type": "Source"
@@ -182,7 +182,7 @@
       }
     },
     {
-        "apiVersion": "v1",
+        "apiVersion": "apps.openshift.io/v1",
         "kind": "DeploymentConfig",
         "metadata": {
             "annotations": {
@@ -307,7 +307,7 @@
         }
     },
     {
-      "apiVersion": "v1",
+      "apiVersion": "build.openshift.io/v1",
       "kind": "BuildConfig",
       "metadata": {
         "annotations": {

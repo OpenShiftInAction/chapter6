@@ -102,7 +102,7 @@
   ],
   "objects": [
     {
-      "apiVersion": "v1",
+      "apiVersion": "authorization.openshift.io/v1",
       "groupNames": null,
       "kind": "RoleBinding",
       "metadata": {
@@ -146,7 +146,7 @@
     },
     {
       "kind": "DeploymentConfig",
-      "apiVersion": "v1",
+      "apiVersion": "apps.openshift.io/v1",
       "metadata": {
         "name": "${MONGODB_APPLICATION_NAME}",
         "labels": {
@@ -220,6 +220,18 @@
                   {
                     "name": "MONGODB_ADMIN_PASSWORD",
                     "value": "${MONGODB_ADMIN_PASSWORD}"
+                  },
+                  {
+                    "name": "MONGODB_USER",
+                    "value": "${MONGODB_USER}"
+                  },
+                  {
+                    "name": "MONGODB_PASSWORD",
+                    "value": "${MONGODB_PASSWORD}"
+                  },
+                  {
+                    "name": "MONGODB_DATABASE",
+                    "value": "${MONGODB_DATABASE}"
                   }
                 ],
                 "resources": {
@@ -271,7 +283,7 @@
     },
     {
       "kind": "ImageStream",
-      "apiVersion": "v1",
+      "apiVersion": "image.openshift.io/v1",
       "metadata": {
         "name": "${APPLICATION_NAME}"
       },
@@ -285,7 +297,7 @@
     },
     {
       "kind": "DeploymentConfig",
-      "apiVersion": "v1",
+      "apiVersion": "apps.openshift.io/v1",
       "metadata": {
         "name": "${APPLICATION_NAME}",
         "labels": {
@@ -410,7 +422,7 @@
     },
     {
       "kind": "Route",
-      "apiVersion": "v1",
+      "apiVersion": "route.openshift.io/v1",
       "metadata": {
         "name": "${APPLICATION_NAME}",
         "labels": {

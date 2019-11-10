@@ -15,7 +15,7 @@
   },
   "objects": [
     {
-        "apiVersion": "v1",
+        "apiVersion": "authorization.openshift.io/v1",
         "groupNames":  [
             "system:serviceaccounts:cicd"
         ],
@@ -36,7 +36,7 @@
         }        
     },
     {
-        "apiVersion": "v1",
+        "apiVersion": "authorization.openshift.io/v1",
         "groupNames":  [
             "system:serviceaccounts:cicd"
         ],
@@ -117,7 +117,7 @@
         }
     },
     {
-        "apiVersion": "v1",
+        "apiVersion": "route.openshift.io/v1",
         "kind": "Route",
         "metadata": {
             "annotations": {
@@ -133,14 +133,14 @@
         }
     },
     {
-      "apiVersion": "v1",
+      "apiVersion": "image.openshift.io/v1",
       "kind": "ImageStream",
       "metadata": {
         "name": "${JENKINS_SERVICE_NAME}"
       }
     },
     {
-      "apiVersion": "v1",
+      "apiVersion": "build.openshift.io/v1",
       "kind": "BuildConfig",
       "metadata": {
         "name": "${JENKINS_SERVICE_NAME}"
@@ -166,7 +166,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "DockerImage",
-              "name": "registry.access.redhat.com/openshift3/jenkins-2-rhel7:latest"
+              "name": "registry.access.redhat.com/openshift3/jenkins-2-rhel7:v3.11"
             }
           },
           "type": "Source"
@@ -182,7 +182,7 @@
       }
     },
     {
-        "apiVersion": "v1",
+        "apiVersion": "apps.openshift.io/v1",
         "kind": "DeploymentConfig",
         "metadata": {
             "annotations": {
@@ -307,7 +307,7 @@
         }
     },
     {
-      "apiVersion": "v1",
+      "apiVersion": "build.openshift.io/v1",
       "kind": "BuildConfig",
       "metadata": {
         "annotations": {
@@ -340,7 +340,7 @@
         },
         "strategy": {
           "jenkinsPipelineStrategy": {
-            "jenkinsfile": "//Syntax: https://jenkins.io/doc/pipeline/steps/openshift-pipeline/\r\nnode {\r\n    echo 'Hello World'\r\n    stage 'building in dev'\r\n        openshiftBuild(buildConfig: 'todo-app-flask-mongo', showBuildLogs: 'true', namespace: 'dev')\r\n    stage 'deploy in dev'\r\n        openshiftVerifyBuild(buildConfig: 'todo-app-flask-mongo', checkForTriggeredDeployments: 'true', namespace: 'dev')\r\n    stage 'promote to test'\r\n        openshiftTag(srcStream: 'todo-app-flask-mongo', srcTag: 'latest', destStream: 'todo-app-flask-mongo', destTag: 'promoteToTest', namespace: 'dev')\r\n    stage 'verifying test env'\r\n        openshiftVerifyDeployment(depCfg: 'todo-app-flask-mongo', namespace: 'test')\r\n    stage 'load testing'\r\n        echo 'load testing shell'\r\n    stage ('deploy to prod'){\r\n        timeout(time:5, unit:'MINUTES') {\r\n            input message: \"Promote to STAGE?\", ok: \"Promote\"\r\n        }\r\n        openshiftTag(srcStream: 'todo-app-flask-mongo', srcTag: 'promoteToTest', destStream: 'todo-app-flask-mongo', destTag: 'promoteToProd', namespace: 'dev')\r\n        openshiftVerifyDeployment(depCfg: 'todo-app-flask-mongo', namespace: 'prod')\r\n    \r\n    }\r\n}"
+            "jenkinsfile": "//Syntax: https://jenkins.io/doc/pipeline/steps/openshift-pipeline/\r\nnode {\r\n    echo 'Hello World'\r\n    stage 'building in dev'\r\n        openshiftBuild(buildConfig: 'todo-app-flask-mongo', showBuildLogs: 'true', namespace: 'dev')\r\n    stage 'deploy in dev'\r\n        openshiftVerifyBuild(buildConfig: 'todo-app-flask-mongo', namespace: 'dev')\r\n    stage 'promote to test'\r\n        openshiftTag(srcStream: 'todo-app-flask-mongo', srcTag: 'latest', destStream: 'todo-app-flask-mongo', destTag: 'promoteToTest', namespace: 'dev')\r\n    stage 'verifying test env'\r\n        openshiftVerifyDeployment(depCfg: 'todo-app-flask-mongo', namespace: 'test')\r\n    stage 'load testing'\r\n        echo 'load testing shell'\r\n    stage ('deploy to prod'){\r\n        timeout(time:5, unit:'MINUTES') {\r\n            input message: \"Promote to STAGE?\", ok: \"Promote\"\r\n        }\r\n        openshiftTag(srcStream: 'todo-app-flask-mongo', srcTag: 'promoteToTest', destStream: 'todo-app-flask-mongo', destTag: 'promoteToProd', namespace: 'dev')\r\n        openshiftVerifyDeployment(depCfg: 'todo-app-flask-mongo', namespace: 'prod')\r\n    \r\n    }\r\n}"
           },
           "type": "JenkinsPipeline"
         }
